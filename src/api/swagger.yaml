@@ -1,0 +1,255 @@
+---
+swagger: "2.0"
+info:
+  description: "APIs for managing data ingestion in the IBM Cloud Object Storage."
+  version: "v1"
+  title: "Ingestion API"
+basePath: "/ingestion/api"
+tags:
+- name: "v1"
+paths:
+  /data:
+    post:
+      tags:
+      - "Upload"
+      summary: "Upload data resource to data lake"
+      description: "Writes a data resource with the specified filename and associated\
+        \ metadata "
+      operationId: "postData"
+      consumes:
+      - "application/octet-stream"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "tenantid"
+        in: "header"
+        description: "The tenant identifier of the client application"
+        required: true
+        type: "string"
+      - name: "sourceid"
+        in: "header"
+        description: "Identifier of source originating the data"
+        required: true
+        type: "string"
+      - name: "entityid"
+        in: "header"
+        description: "An entity ID associated to the document in the data lake"
+        required: true
+        type: "string"
+      - name: "user"
+        in: "header"
+        description: "The user identifier in the uploaded data"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "The data object to write to data-lake"
+        required: true
+        schema:
+          $ref: "#/definitions/InputStream"
+      responses:
+        201:
+          description: "The metadata of the data just written"
+          schema:
+            $ref: "#/definitions/ObjectMeta"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "Upload"
+  /data/{resourceid}:
+    get:
+      tags:
+      - "Download"
+      summary: "Download data resource from data lake"
+      description: "Retrieves a data resource, referenced by its resourceid"
+      operationId: "getData"
+      produces:
+      - "application/octet-stream"
+      parameters:
+      - name: "user"
+        in: "header"
+        description: "The end user making the request"
+        required: true
+        type: "string"
+      - name: "resourceid"
+        in: "path"
+        description: "The resourceid of the resource to be retrieved"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "The data resource that was requested"
+          schema:
+            $ref: "#/definitions/InputStream"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "Download"
+    delete:
+      tags:
+      - "Delete"
+      summary: "Delete uploaded data resource"
+      description: "Delete uploaded data resource from the datalLake for a specific\
+        \ resourceid"
+      operationId: "deleteData"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "user"
+        in: "header"
+        description: "The end user making the request"
+        required: true
+        type: "string"
+      - name: "resourceid"
+        in: "path"
+        description: "The resourceid of the data resource to be deleted"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "Delete"
+  /metadata/{resourceid}:
+    get:
+      tags:
+      - "Metadata"
+      summary: "Get metadata of an uploaded data resource"
+      description: "Retrieves attributes from the data lake for a resource ID"
+      operationId: "getMetadata"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "user"
+        in: "header"
+        description: "The end user making the request"
+        required: true
+        type: "string"
+      - name: "resourceid"
+        in: "path"
+        description: "The resourceid of the data resource for which metadata should\
+          \ returned"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "The metadata of the requested resourceid"
+          schema:
+            $ref: "#/definitions/ObjectMeta"
+        204:
+          description: "No content"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "Metadata"
+  /search:
+    get:
+      tags:
+      - "SearchByMetadata"
+      summary: "Search datalake and return list of resource IDs matching criteria"
+      description: "Searches and retrieves resource IDs from the data\
+        \ lake based on search criteria"
+      operationId: "searchByMetadata"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "tenantid"
+        in: "header"
+        description: "The tenant identifier of the client application"
+        required: true
+        type: "string"
+      - name: "sourceid"
+        in: "header"
+        description: "Identifier of source originating the data"
+        required: true
+        type: "string"
+      - name: "entityid"
+        in: "header"
+        description: "An entity ID associated to the document in the data lake"
+        required: true
+        type: "string"
+      - name: "user"
+        in: "header"
+        description: "The end user making the request"
+        required: true
+        type: "string"
+      - name: "maxResults"
+        in: "query"
+        description: "The maximum number of entries to be returned. Default and limit\
+          \ is 1000."
+        required: false
+        type: "integer"
+        format: "int64"
+      - name: "marker"
+        in: "query"
+        description: "Next marker for subsequent queries. Default is \"\""
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "The resource IDs and their attributes matching query criteria\
+            \ up to 1000 or first maxResults if specified"
+          schema:
+            $ref: "#/definitions/ObjectMetaMessage"
+        204:
+          description: "No content"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "SearchByMetadata"
+  /version:
+    get:
+      tags:
+      - "Version"
+      summary: "Show version"
+      description: "Displays the current version of data lake release."
+      operationId: "getVersion"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "Returns a version message as a JSON string"
+      x-swagger-router-controller: "Version"
+definitions:
+  InputStream:
+    type: "object"
+  ObjectMetaMessage:
+    type: "object"
+    properties:
+      resultsList:
+        type: "array"
+        items:
+          type: "string" 
+      exceedsLimit:
+        type: "boolean"
+        default: false
+      nextMarker:
+        type: "string"
+        default: ""
+    example:
+      resultsList:
+      - "resourceId1"
+      - "resourceId2"
+      nextMarker: "nextMarker"
+      exceedsLimit: false
+  ObjectMeta:
+    type: "object"
+    properties:
+      resourceId:
+        type: "string"
+      entityId:
+        type: "string"
+      tenantId:
+        type: "string"
+      sourceId:
+        type: "string"
+      user:
+        type: "string"
+      objectSize:
+        type: "integer"
+        format: "int64"
+    example:
+      tenantId: "tenantId"
+      sourceId: "sourceId"
+      entityId: "entityId"
+      user: "user"
+      resourceId: "resourceId"
+      objectSize: 0

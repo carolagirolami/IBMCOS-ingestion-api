@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ingestion-api
+  name: ingestion-api
+spec:
+  replicas: 2
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: ingestion-api
+    spec:
+      containers:
+      - image: "registry.eu-gb.bluemix.net/cg_namespace1/ingestion-api"
+        name: ingestion-api
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9080
+        env:
+        - name: DEFAULT_API_KEY
+          valueFrom:
+            secretKeyRef:
+             name: apikey
+             key: DEFAULT_API_KEY
+        - name: DEFAULT_SERVICE_INSTANCE_ID
+          valueFrom:
+            secretKeyRef:
+             name: apikey
+             key: DEFAULT_SERVICE_INSTANCE_ID
+        - name: DEFAULT_IAM_ENDPOINT 
+          value: "https://iam.bluemix.net/oidc/token"
+        - name: DEFAULT_ENDPOINT_URL 
+          value: "https://s3-api.us-geo.objectstorage.softlayer.net"
+        resources: {}
+      hostname: ingestion-api
+      restartPolicy: Always
+status: {}
