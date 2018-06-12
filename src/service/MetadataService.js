@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 'use strict';
 
 var AWS = require('ibm-cos-sdk');
@@ -9,17 +10,17 @@ var cosConnection = require('../utils/cosConnection.js');
  * Retrieves attributes from the data lake for a resource ID
  *
  * tenantid String The tenant identifier of the client application
- * user String The end user making the request
+ * operator String The end operator making the request
  * resourceid String The resourceid of the data resource for which metadata should returned
  * returns ObjectMeta
  **/
 
 
 exports.doGetMetadata = function(resourceid) {
-	 console.log('Creating metadata'); 
+	 console.log('Getting metadata'); 
 	 var cos = cosConnection.configure();
-	 return cos.headObject({
-	    Bucket: cosConnection.bucketName,
-	    Key: resourceid
+	 return cos.getObject({
+	    Bucket: cosConnection.metadataBucketName,
+	    Key: resourceid,
 	 }).promise();
-}
+};

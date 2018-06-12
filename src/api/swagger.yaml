@@ -31,16 +31,21 @@ paths:
         description: "Identifier of source originating the data"
         required: true
         type: "string"
-      - name: "entityid"
+      - name: "subjectid"
         in: "header"
-        description: "An entity ID associated to the document in the data lake"
+        description: "An subject ID associated to the document in the data lake"
         required: true
         type: "string"
-      - name: "user"
+      - name: "operator"
         in: "header"
         description: "The user identifier in the uploaded data"
         required: true
         type: "string"
+      - name: contenttype
+        in: "header"
+        description: "The content type of the data e.g. HL7v2 or JSON"
+        required: true
+        type: string
       - in: "body"
         name: "body"
         description: "The data object to write to data-lake"
@@ -52,8 +57,10 @@ paths:
           description: "The metadata of the data just written"
           schema:
             $ref: "#/definitions/ObjectMeta"
-        500:
-          description: "Internal Server Error"
+        400:
+          description: "Bad Request"       
+        404:
+          description: "Not Found"    
       x-swagger-router-controller: "Upload"
   /data/{resourceid}:
     get:
@@ -65,10 +72,11 @@ paths:
       produces:
       - "application/octet-stream"
       parameters:
-      - name: "user"
+      - name: "operator"
         in: "header"
         description: "The end user making the request"
-        required: true
+        required: false
+        default: ""
         type: "string"
       - name: "resourceid"
         in: "path"
@@ -80,8 +88,8 @@ paths:
           description: "The data resource that was requested"
           schema:
             $ref: "#/definitions/InputStream"
-        500:
-          description: "Internal Server Error"
+        404:
+          description: "Not Found"    
       x-swagger-router-controller: "Download"
     delete:
       tags:
@@ -93,10 +101,11 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "user"
+      - name: "operator"
         in: "header"
         description: "The end user making the request"
-        required: true
+        required: false
+        default: ""
         type: "string"
       - name: "resourceid"
         in: "path"
@@ -106,8 +115,8 @@ paths:
       responses:
         200:
           description: "Success"
-        500:
-          description: "Internal Server Error"
+        404:
+          description: "Not Found"  
       x-swagger-router-controller: "Delete"
   /metadata/{resourceid}:
     get:
@@ -119,10 +128,11 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "user"
+      - name: "operator"
         in: "header"
         description: "The end user making the request"
-        required: true
+        required: false
+        default: ""
         type: "string"
       - name: "resourceid"
         in: "path"
@@ -135,19 +145,17 @@ paths:
           description: "The metadata of the requested resourceid"
           schema:
             $ref: "#/definitions/ObjectMeta"
-        204:
-          description: "No content"
-        500:
-          description: "Internal Server Error"
+        404:
+          description: "Not Found"
       x-swagger-router-controller: "Metadata"
   /search:
     get:
       tags:
-      - "SearchByMetadata"
-      summary: "Search datalake and return list of resource IDs matching criteria"
+      - "SearchByKey"
+      summary: "Search datalake by key metadata and return list of resource IDs matching criteria"
       description: "Searches and retrieves resource IDs from the data\
         \ lake based on search criteria"
-      operationId: "searchByMetadata"
+      operationId: "searchByKey"
       produces:
       - "application/json"
       parameters:
@@ -161,27 +169,30 @@ paths:
         description: "Identifier of source originating the data"
         required: true
         type: "string"
-      - name: "entityid"
+      - name: "subjectid"
         in: "header"
-        description: "An entity ID associated to the document in the data lake"
+        description: "An subject ID associated to the document in the data lake"
         required: true
         type: "string"
-      - name: "user"
+      - name: "operator"
         in: "header"
         description: "The end user making the request"
-        required: true
+        required: false
+        default: ""
         type: "string"
       - name: "maxResults"
         in: "query"
         description: "The maximum number of entries to be returned. Default and limit\
           \ is 1000."
         required: false
+        default: 1000
         type: "integer"
         format: "int64"
-      - name: "marker"
+      - name: "offset"
         in: "query"
         description: "Next marker for subsequent queries. Default is \"\""
         required: false
+        default: ""
         type: "string"
       responses:
         200:
@@ -189,10 +200,68 @@ paths:
             \ up to 1000 or first maxResults if specified"
           schema:
             $ref: "#/definitions/ObjectMetaMessage"
-        204:
-          description: "No content"
-        500:
-          description: "Internal Server Error"
+      x-swagger-router-controller: "SearchByKey"
+  /searchall:
+    get:
+      tags:
+      - "SearchByMetadata"
+      summary: "Search datalake by metadata and return list of resource IDs matching criteria"
+      description: "Searches and retrieves resource IDs from the data\
+        \ lake based on search criteria"
+      operationId: "searchByMetadata"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "tenantid"
+        in: "query"
+        description: "The tenant identifier of the client application"
+        required: false
+        default: ""
+        type: "string"
+      - name: "sourceid"
+        in: "query"
+        description: "Identifier of source originating the data"
+        required: false
+        default: ""
+        type: "string"
+      - name: "subjectid"
+        in: "query"
+        description: "An subject ID associated to the document in the data lake"
+        required: false
+        default: ""
+        type: "string"
+      - name: "operator"
+        in: "query"
+        description: "The end user making the request"
+        required: false
+        default: ""
+        type: "string"
+      - name: contenttype
+        in: "query"
+        description: "The content type of the data e.g. HL7v2 or JSON"
+        required: false
+        default: ""
+        type: string
+      - name: "maxResults"
+        in: "query"
+        description: "The maximum number of entries to be returned. Default and limit\
+          \ is 1000."
+        required: false
+        default: 1000
+        type: "integer"
+        format: "int64"
+      - name: "offset"
+        in: "query"
+        description: "Next marker for subsequent queries made with index#jobid. Default is \"\""
+        required: false
+        default: ""
+        type: "string"                                                                                                                                                                                                        
+      responses:
+        200:
+          description: "The resource IDs and their attributes matching query criteria\
+            \ up to 1000 or first maxResults if specified"
+          schema:
+            $ref: "#/definitions/ObjectMetaMessage"
       x-swagger-router-controller: "SearchByMetadata"
   /version:
     get:
@@ -218,30 +287,26 @@ definitions:
         type: "array"
         items:
           type: "string" 
-      exceedsLimit:
-        type: "boolean"
-        default: false
-      nextMarker:
+      nextOffset:
         type: "string"
         default: ""
     example:
       resultsList:
       - "resourceId1"
       - "resourceId2"
-      nextMarker: "nextMarker"
-      exceedsLimit: false
+      nextOffset: "nextoffset"
   ObjectMeta:
     type: "object"
     properties:
       resourceId:
         type: "string"
-      entityId:
+      subjectId:
         type: "string"
       tenantId:
         type: "string"
       sourceId:
         type: "string"
-      user:
+      operator:
         type: "string"
       objectSize:
         type: "integer"
@@ -249,7 +314,7 @@ definitions:
     example:
       tenantId: "tenantId"
       sourceId: "sourceId"
-      entityId: "entityId"
-      user: "user"
+      subjectId: "subjectId"
+      operator: "user"
       resourceId: "resourceId"
       objectSize: 0

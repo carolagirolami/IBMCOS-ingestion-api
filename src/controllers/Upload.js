@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 'use strict';
 
 var utils = require('../utils/writer.js');
@@ -9,23 +10,31 @@ var bodyParser = require('body-parser');
 module.exports.postData = function postData (req, res, next) {
 	var tenantid = req.swagger.params['tenantid'].value;
 	var sourceid = req.swagger.params['sourceid'].value;
-	var entityid = req.swagger.params['entityid'].value;
-	var user = req.swagger.params['user'].value;
+	var subjectid = req.swagger.params['subjectid'].value;
+	var operator = req.swagger.params['operator'].value;
+	var contenttype = req.swagger.params['contenttype'].value;
 	var body = req.swagger.params['body'].value;
-
-	//Generate resource id and metadata map then pass to the create objects as arguments with he body.
-	Promise.all([Upload.doGenerateResourceId(tenantid,sourceid,entityid,user,body),
-		Upload.doGenerateMetadata(tenantid,sourceid,entityid,user,body)])
-		.then(([resourceid,metadata])=>{
-			Upload.doCreateObject(resourceid,metadata,body)
-			.then(function () {
+	
+	//check if content is valid
+	Upload.doParseContent(contenttype,body)
+	.then(function(validationdata){
+		if( validationdata["valid"] === "true")
+		{
+			var resourceid = Upload.doGenerateResourceId(tenantid,sourceid,subjectid,operator,body); 
+			var metadata = Upload.doGenerateMetadata(tenantid,sourceid,subjectid,operator,contenttype,validationdata,resourceid,body);				
+			//Generate resource id and metadata map then pass to the create objects as arguments with he body.
+			Upload.doCreateMetadata(resourceid,metadata)
+			.then(()=>Upload.doCreateObject(resourceid,body))
+			.then(function() {
 				utils.writeJson(res, metadata);
-			}).catch(function (err, data) {
+			})
+			.catch(function (err, data) {
 				utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	   
 			});
-		})
-		.catch(function (err, data) {
-			utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	   
-		});
+		}
+	})
+	.catch(function (err) {
+		utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	
+	});
 
-}
+};
