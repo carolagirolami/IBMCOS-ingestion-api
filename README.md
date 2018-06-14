@@ -19,7 +19,7 @@ Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js 
 
 ## Preliminary Steps
 
-### 1. Create and configure an Cloud Object Storage service instance
+### 1. Create and configure a Cloud Object Storage service instance
 Sign up for an IBM Cloud account. Once registered, add an [IBM Cloud Object Storage service](https://console.bluemix.net/catalog/services/cloud-object-storage). 
 
 In the IBM Cloud Object Storage UI:
