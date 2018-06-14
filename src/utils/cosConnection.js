@@ -29,15 +29,16 @@ var DEFAULT_IAM_ENDPOINT = process.env.DEFAULT_IAM_ENDPOINT;
 var DEFAULT_ENDPOINT_URL = process.env.DEFAULT_ENDPOINT_URL;
 var DEFAULT_API_KEY = process.env.DEFAULT_API_KEY;
 var DEFAULT_SERVICE_INSTANCE_ID = process.env.DEFAULT_SERVICE_INSTANCE_ID;
+var DEFAULT_OBJECTBUCKET = exports.DEFAULT_OBJECTBUCKET = process.env.DEFAULT_OBJECTBUCKET;
+var DEFAULT_METADATABUCKET = exports.DEFAULT_METADATABUCKET = process.env.DEFAULT_METADATABUCKET;
 */
 
 var DEFAULT_IAM_ENDPOINT = "https://iam.bluemix.net/oidc/token";
 var DEFAULT_ENDPOINT_URL = "https://s3-api.us-geo.objectstorage.softlayer.net";
 var DEFAULT_API_KEY = "0HBlUzk7oozORyUwdpeIM7L7MO9vhz0uVQGNIlYO_E75";
 var DEFAULT_SERVICE_INSTANCE_ID = "crn:v1:bluemix:public:cloud-object-storage:global:a/bb8a72628edc88f203c685fd8b0af2ca:bf9bc4cc-7dda-427e-90b4-703c6a380ba6::";
-
-var objectsBucketName = exports.objectsBucketName = "data.net";
-var metadataBucketName = exports.metadataBucketName = "metadata.net";
+var DEFAULT_OBJECTBUCKET = exports.DEFAULT_OBJECTBUCKET = "data.net";
+var DEFAULT_METADATABUCKET = exports.DEFAULT_METADATABUCKET = "metadata.net";
 
 
 var config = {

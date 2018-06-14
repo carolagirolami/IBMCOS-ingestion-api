@@ -19,11 +19,6 @@ Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js 
 
 ## Preliminary Steps
 
-1. [Create and configure an Cloud Object Storage service instance](#1-create_cos_instance)
-2. [Create a SQL Query service instance](#2-create_sql_instance)
-3. [Build and publish hl7parser cloud function](#3-build_hl7parser)
-4. [Build and publish SQL cloud function](#4-build_sqlfunction)
-
 ### 1. Create and configure an Cloud Object Storage service instance
 Sign up for an IBM Cloud account. Once registered, add an [IBM Cloud Object Storage service](https://console.bluemix.net/catalog/services/cloud-object-storage). 
 
@@ -42,12 +37,10 @@ Follow instructions for [hl7-parser-cloud-function](https://github.com/AnnalisaC
 
 ### 4. Build and publish SQL cloud function
 Follow instructions for [sqlcloudfunction](https://github.com/IBM-Cloud/sql-query-clients/tree/master/Python/cloud_function)
-
+Make a note of the cloudfunction api host and namespace.
 
 
 ## Run the application locally
-1. [Clone the repo](#1-clone-the-repo)
-2. [Run the application](#2-run-the-application)
 
 ### 1. Clone the repo
 
@@ -71,8 +64,6 @@ Verify app is running and working correctly.
 
 
 ## Run the application using Docker
-1. [Build the image](#1-build-the-image)
-2. [Run the image](#2-run-the-image)
 
 ### Prerequisites:
 1. [Create Docker account](https://cloud.docker.com/)
@@ -109,10 +100,6 @@ You can now access the application at http://localhost:3000
 
 
 ## Run the application on Kubernetes
-
-1. [Build image](#1-build-image)
-2. [Deploy and run the application on Kubernetes with a yaml file](#2-deploy-the-application)
-3. [Expose the app to the web by setting the port with the yaml file](#3-service-for-the-application)
 
 ### Prerequisites
 1. [Create an account with IBM Cloud](https://console.bluemix.net/registration/)
@@ -172,8 +159,33 @@ $ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/IBMCOS
 
 ### 2. Deploy and run the application on Kubernetes with a yaml file
 
+- Create a built-in secret to store APIKEY and SERVICE_INSTANCE_ID obtained at point 1. Create and configure an Cloud Object Storage service instance. 
+
 ```
-kubectl create -f deploy/ingestion-api-deployment.yml
+  kubectl create secret generic apikey --from-literal=DEFAULT_API_KEY="XXXXXXX" --from-literal=DEFAULT_SERVICE_INSTANCE_ID="crn:v1:bluemix:public:cloud-object-storage:global:a/xxxxxx"
+```
+
+- Edit the file deploy/ingestion-api-deployment.yml setting the following variables on the base of the value 
+obtained at point 1. Create and configure an Cloud Object Storage service instance.  and point  4. Build and publish SQL cloud function
+
+```
+    - name: DEFAULT_IAM_ENDPOINT 
+      value: <iam endpoint>
+    - name: DEFAULT_ENDPOINT_URL 
+      value: <endpoint_url>
+    - name : DEFAULT_CLOUDFUNCTION_API_HOST
+      value: <cloudfunction_api_host>
+    - name: DEFAULT_CLOUDFUNCTION_NAMESPACE
+      value: <cloudfunction_namespace>
+    - name: DEFAULT_OBJECTBUCKET
+      value: <object_bucket_name>  
+    - name: DEFAULT_METADATABUCKET
+      value: <metadata_bucket_name>  
+```
+- Run:
+
+```
+    kubectl create -f deploy/ingestion-api-deployment.yml
 ```
 
 ### 3. Expose the app to the web by setting the port with the yaml file
@@ -182,14 +194,12 @@ kubectl create -f deploy/ingestion-api-deployment.yml
 kubectl create -f service/ingestion-api-service.yml
 ```
 
-* To access your application. You would need the public IP address of your cluster and NodePort of the service.
+To access your application. You would need the public IP address of your cluster and NodePort of the service.
 
 ```
 # For clusters provisioned with IBM Cloud
 $ bx cs workers YOUR_CLUSTER_NAME
-```
 
-```
 # For details on a specific Kubernetes service
 $ kubectl describe service deploy-react-kubernetes-service
 ```
