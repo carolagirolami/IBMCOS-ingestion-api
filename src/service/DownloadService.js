@@ -17,20 +17,17 @@
 /*jshint esversion: 6 */
 'use strict';
 
-
-/**
- * Download data resource from data lake
- * Retrieves a data resource, referenced by its resourceid
- *
- * tenantid String The tenant identifier of the client application
- * operator String The end operator making the request
- * resourceid String The resourceid of the resource to be retrieved
- * returns InputStream
- **/
 var AWS = require('ibm-cos-sdk');
 var util = require('util');
 var cosConnection = require('../utils/cosConnection.js');
 
+/**
+ * Check data resource from data lake
+ * Check data exists in the metadata bucket
+ *
+ * resourceid String The resourceid of the resource to be retrieved
+ * return promise
+ **/
 exports.doCheckObject = function (resourceid) {
     console.log('Check object id:'+resourceid);
     var cos = cosConnection.configure();
@@ -40,6 +37,13 @@ exports.doCheckObject = function (resourceid) {
     }).promise();
 };
 
+/**
+ * Download data resource from data lake
+ * Retrieves a data resource, referenced by its resourceid
+ *
+ * resourceid String The resourceid of the resource to be retrieved
+ * return promise
+ **/
 exports.doGetObject = function (resourceid) {
     console.log('Download object id:'+resourceid);
     var cos = cosConnection.configure();

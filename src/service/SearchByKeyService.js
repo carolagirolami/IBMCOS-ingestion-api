@@ -22,16 +22,15 @@ var util = require('util');
 var cosConnection = require('../utils/cosConnection.js');
 
 /**
- * Search datalake and return list of resource IDs and attributes
- * Searches and retrieves resource IDs and metadata from the data lake based on search criteria
+ * Search datalake and return list of resource IDs
+ * Searches and retrieves resource IDs from the metadata bucket based on search criteria on key
  *
  * tenantid String The tenant identifier of the client application
  * sourceid String Identifier of source originating the data
  * subjectid String A subject ID associated to some data resources in the data lake
- * operator String The end operator making the request
  * maxResults Long The maximum number of entries to be returned. Default and limit is 1000. (optional)
  * offset String Next offset for subsequent queries. Default is \"\" (optional)
- * returns array of resourceids
+ * returns array of promise
  **/
 
 exports.doListObjects = function(tenantid,sourceid,subjectid,operator,maxResults,offset) {
@@ -43,10 +42,9 @@ exports.doListObjects = function(tenantid,sourceid,subjectid,operator,maxResults
 		console.log('query:'+prefix);
 		console.log('maxResults:'+maxResults);
 		console.log('offset:'+offset);
-		console.log('List objects');  
 		var cos = cosConnection.configure();
 		return cos.listObjects({
-			Bucket: cosConnection.objectsBucketName, /* required */
+			Bucket: cosConnection.metadataBucketName, /* required */
 			Marker: offset,
 			MaxKeys: maxResults,
 			Prefix: prefix
