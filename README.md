@@ -4,6 +4,7 @@
 Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js application that uses the IBM Object Storage service available on IBM Cloud and deploy it on top of the container orchestration platform Kubernetes. Documents are parsed and validated using an external cloud function: hl7parsercloudfunction. Two types of searches are available, one by keys and one by metadata using the IBM SQL Query service.  
 
 
+
 ## Flow
 
 ![Architecture Diagram](images/flow.png)
@@ -15,12 +16,13 @@ Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js 
 5. The sqlcloudfunction runs sql statements using the SQL Query service.
 
 
-# Steps
 
-1.##[Create and configure an Cloud Object Storage service instance]
-2.##[Create a SQL Query service instance]
-3.##[Build and publish hl7parser cloud function]
-4.##[Build and publish SQL cloud function]
+## Steps
+
+1. [Create and configure an Cloud Object Storage service instance](#1-create_cos_instance)
+2. [Create a SQL Query service instance](#2-create_sql_instance)
+3. [Build and publish hl7parser cloud function](#3-build_hl7parser)
+4. [Build and publish SQL cloud function](#4-build_sqlfunction)
 
 ### 1. Create and configure an Cloud Object Storage service instance
 Sign up for an IBM Cloud account. Once registered, add an [IBM Cloud Object Storage service](https://console.bluemix.net/catalog/services/cloud-object-storage). 
@@ -41,6 +43,8 @@ Follow instructions for [hl7-parser-cloud-function](https://github.com/AnnalisaC
 Follow instructions for [sqlcloudfunction](https://github.com/IBM-Cloud/sql-query-clients/tree/master/Python/cloud_function)
 
 
+
+
 ## Run locally
 1. [Clone the repo](#1-clone-the-repo)
 2. [Run the application](#2-run-the-application)
@@ -50,7 +54,7 @@ Follow instructions for [sqlcloudfunction](https://github.com/IBM-Cloud/sql-quer
 Clone the repo locally. In a terminal, run:
 
 ```
-$ git clone https://github.com/IBM/deploy-react-kubernetes
+$ git clone https://github.com/carolagirolami/IBMCOS-ingestion-api.git
 ```
 
 ### 2. Run the application
@@ -59,9 +63,6 @@ $ git clone https://github.com/IBM/deploy-react-kubernetes
 
 ```
 $ npm install
-
-$ npm run build-css
-
 $ npm run start
 ```
 
@@ -81,8 +82,9 @@ Verify app is running and working correctly.
 ### 1. Build the image
 
 In a terminal, run:
+
 ```
-$ docker build -t $docker_username/deploy-react-kubernetes .
+$ docker build -t $docker_username/IBMCOS-ingestion-api .
 ```
 
 Your image should be listed by running:
@@ -96,7 +98,7 @@ $ docker images
 In a terminal, run:
 
 ```
-$ docker run -p 3000:3000 -d $docker_username/deploy-react-kubernetes
+$ docker run -p 3000:3000 -d $docker_username/IBMCOS-ingestion-api
 ```
 
 You can now access the application at http://localhost:3000
@@ -112,6 +114,7 @@ You can now access the application at http://localhost:3000
 2. [Install IBM Cloud CLI](https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html#getting-started)
 
 3. Log into your IBM Cloud account
+
 ```
 bx login 
 ```
@@ -119,11 +122,13 @@ bx login
 If you have a federated ID, use bx login --sso to log in to the IBM Cloud CLI.
 
 4. Install the Container Registry plug-in.
+
 ```
 bx plugin install container-registry -r Bluemix
 ```
 
 5. Install the Container Service plug-in.
+
 ```
 bx plugin install IBM-Containers -r Bluemix
 ```
@@ -131,11 +136,13 @@ bx plugin install IBM-Containers -r Bluemix
 6. [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
 
 7. Create cluster
+
 ```
 bx cs cluster-create --name YOUR_CLUSTER_NAME
 ```
 
 8. Configure Kubernetes cluster
+
 ```
 $ bx cs cluster-config YOUR_CLUSTER_NAME
 ```
@@ -143,6 +150,7 @@ $ bx cs cluster-config YOUR_CLUSTER_NAME
 Copy and paste response in CLI
 
 9. Choose a name for your first namespace, and create that namespace. Use this namespace for the rest of the Quick Start.
+
 ```
 $ bx cr namespace-add YOUR_NAMESPACE
 ```
@@ -151,26 +159,21 @@ $ bx cr namespace-add YOUR_NAMESPACE
 ### 1. Build image
 
 Build image in the IBM Container Registry: 
-```
-$ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/deploy-react-kubernetes .
-```
-
-### 2. Deploy the application
-
-``` 
-$ kubectl run deploy-react-kubernetes-deployment —-image=registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/deploy-react-kubernetes
-```
-
-To check how many pods are running on Kubernetes run the command: 
-```
-kubectl get pods
-```
-
-Expose the app to the web by setting the port. Run the command:
 
 ```
-$ kubectl expose deployment/deploy-react-kubernetes-deployment 
-—-type=NodePort —-name=deploy-react-kubernetes-service —-port=3000
+$ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/IBMCOS-ingestion-api .
+```
+
+### 2. Deploy and run the application on Kubernetes with a yaml file
+
+```
+kubectl create -f deploy/ingestion-api-deployment.yml
+```
+
+### 3. Expose the app to the web by setting the port with the yaml file:
+
+```
+kubectl create -f service/ingestion-api-service.yml
 ```
 
 * To access your application. You would need the public IP address of your cluster and NodePort of the service.
@@ -187,16 +190,7 @@ $ kubectl describe service deploy-react-kubernetes-service
 
 You can now access the application at http://IP_ADDRESS:NODE_PORT
 
-## Run the application on Kubernetes with a yaml file
 
-Note: Follow the prerequisites in 'Run the application on Kubernetes section' before executing command below. 
-
-```
-kubectl create -f deployment.yaml
-```
-# Links
-
-# Learn more
 
 # License
 
