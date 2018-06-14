@@ -1,7 +1,7 @@
 # REST Application to ingest and search HL7 documents on IBM Cloud Object Storage 
 
 ## Overview
-Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js application that uses the IBM Object Storage service available on IBM Cloud and deploy it on top of the container orchestration platform Kubernetes. Documents are parsed and validated using an external cloud function: hl7parsercloudfunction. Two types of searches are available, one by keys and one by metadata using the IBM SQL Query service.  
+REST APIs to ingest and retrieve stored HL7 documents in a simple Node.js application, the application uses the IBM Object Storage service available on IBM Cloud and is deployed on top of the container orchestration platform Kubernetes. Documents are parsed and validated using an external cloud function: hl7parsercloudfunction. Two types of searches are available, one by keys and one by metadata using the IBM SQL Query service.  
 
 
 
@@ -204,7 +204,7 @@ $ bx cs workers YOUR_CLUSTER_NAME
 $ kubectl describe service deploy-react-kubernetes-service
 ```
 
-You can now access the application at http://IP_ADDRESS:NODE_PORT
+Swagger-ui is available on http://IP_ADDRESS:NODE_PORT/docs
 
 
 
