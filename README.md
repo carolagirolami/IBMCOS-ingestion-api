@@ -8,11 +8,11 @@ Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js 
 
 ![Architecture Diagram](images/flow.png)
 
-1.The external application invokes REST apis 
-2.In case of upload request the INGESTION application invoke the hl7parser cloud function to validate and extract metadata from HL7 documents
-3.The application access the Cloud Object Storage instance to store valid documents, get document metadata, content and search by key.  
-4.To search by metadata the sqlcloud function is invoked.
-5.The sqlcloudfunction runs sql statements using the SQL Query service.
+1. The external application invokes REST apis 
+2. In case of upload request the INGESTION application invoke the hl7parser cloud function to validate and extract metadata from HL7 documents
+3. The application access the Cloud Object Storage instance to store valid documents, get document metadata, content and search by key.  
+4. To search by metadata the sqlcloud function is invoked.
+5. The sqlcloudfunction runs sql statements using the SQL Query service.
 
 
 # Steps
