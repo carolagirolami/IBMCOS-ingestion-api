@@ -109,7 +109,7 @@ You can now access the application at http://localhost:3000
 3. Log into your IBM Cloud account
 
 ```
-bx login 
+$ bx login 
 ```
 
 If you have a federated ID, use bx login --sso to log in to the IBM Cloud CLI.
@@ -117,13 +117,13 @@ If you have a federated ID, use bx login --sso to log in to the IBM Cloud CLI.
 4. Install the Container Registry plug-in.
 
 ```
-bx plugin install container-registry -r Bluemix
+$ bx plugin install container-registry -r Bluemix
 ```
 
 5. Install the Container Service plug-in.
 
 ```
-bx plugin install IBM-Containers -r Bluemix
+$ bx plugin install IBM-Containers -r Bluemix
 ```
 
 6. [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
@@ -131,7 +131,7 @@ bx plugin install IBM-Containers -r Bluemix
 7. Create cluster
 
 ```
-bx cs cluster-create --name YOUR_CLUSTER_NAME
+$ bx cs cluster-create --name YOUR_CLUSTER_NAME
 ```
 
 8. Configure Kubernetes cluster
@@ -162,7 +162,7 @@ $ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/IBMCOS
 - Create a built-in secret to store APIKEY and SERVICE_INSTANCE_ID obtained at point 1. Create and configure an Cloud Object Storage service instance. 
 
 ```
-  kubectl create secret generic apikey --from-literal=DEFAULT_API_KEY="XXXXXXX" --from-literal=DEFAULT_SERVICE_INSTANCE_ID="crn:v1:bluemix:public:cloud-object-storage:global:a/xxxxxx"
+  $ kubectl create secret generic apikey --from-literal=DEFAULT_API_KEY="XXXXXXX" --from-literal=DEFAULT_SERVICE_INSTANCE_ID="crn:v1:bluemix:public:cloud-object-storage:global:a/xxxxxx"
 ```
 
 - Edit the file deploy/ingestion-api-deployment.yml setting the following variables on the base of the value 
@@ -185,13 +185,13 @@ obtained at point 1. Create and configure an Cloud Object Storage service instan
 - Run:
 
 ```
-    kubectl create -f deploy/ingestion-api-deployment.yml
+    $ kubectl create -f deploy/ingestion-api-deployment.yml
 ```
 
 ### 3. Expose the app to the web by setting the port with the yaml file
 
 ```
-kubectl create -f service/ingestion-api-service.yml
+$ kubectl create -f service/ingestion-api-service.yml
 ```
 
 To access your application. You would need the public IP address of your cluster and NodePort of the service.
