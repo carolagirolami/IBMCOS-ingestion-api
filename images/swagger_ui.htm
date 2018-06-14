@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <title>Swagger UI</title>
+  <link rel="icon" type="image/png" href="http://localhost:9080/docs/images/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="http://localhost:9080/docs/images/favicon-16x16.png" sizes="16x16">
+  <link href="Swagger%20UI_files/typography.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="Swagger%20UI_files/reset.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="Swagger%20UI_files/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="Swagger%20UI_files/reset.css" media="print" rel="stylesheet" type="text/css">
+  <link href="Swagger%20UI_files/print.css" media="print" rel="stylesheet" type="text/css">
+  <script src="Swagger%20UI_files/jquery-1.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/jquery_002.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/jquery_003.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/jquery.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/handlebars-2.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/js-yaml.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/lodash.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/backbone-min.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/swagger-ui.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/highlight.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/jsoneditor.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/marked.js" type="text/javascript"></script>
+  <script src="Swagger%20UI_files/swagger-oauth.js" type="text/javascript"></script>
+
+  <!-- Some basic translations -->
+  <!-- <script src='lang/translator.js' type='text/javascript'></script> -->
+  <!-- <script src='lang/ru.js' type='text/javascript'></script> -->
+  <!-- <script src='lang/en.js' type='text/javascript'></script> -->
+
+  <script type="text/javascript">
+    $(function () {
+      function initSwaggerUi (url) {
+        // Pre load translate...
+        if(window.SwaggerTranslator) {
+          window.SwaggerTranslator.translate();
+        }
+        window.swaggerUi = new SwaggerUi({
+          url: url,
+          dom_id: "swagger-ui-container",
+          supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+          onComplete: function(swaggerApi, swaggerUi){
+            if(typeof initOAuth == "function") {
+              initOAuth({
+                clientId: "your-client-id",
+                clientSecret: "your-client-secret-if-required",
+                realm: "your-realms",
+                appName: "your-app-name",
+                scopeSeparator: ",",
+                additionalQueryStringParams: {}
+              });
+            }
+
+            if(window.SwaggerTranslator) {
+              window.SwaggerTranslator.translate();
+            }
+
+            addApiKeyAuthorization();
+          },
+          onFailure: function(data) {
+            log("Unable to Load SwaggerUI");
+          },
+          docExpansion: "none",
+          jsonEditor: false,
+          apisSorter: "alpha",
+          defaultModelRendering: 'schema',
+          showRequestHeaders: false
+        });
+
+        function addApiKeyAuthorization(){
+          var key = encodeURIComponent($('#input_apiKey')[0].value);
+          if(key && key.trim() != "") {
+            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
+            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
+            log("added key " + key);
+          }
+        }
+
+        $('#input_apiKey').change(addApiKeyAuthorization);
+
+        // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
+        /*
+           var apiKey = "myApiKeyXXXX123456789";
+           $('#input_apiKey').val(apiKey);
+         */
+
+        window.swaggerUi.load();
+
+        function log() {
+          if ('console' in window) {
+            console.log.apply(console, arguments);
+          }
+        }
+      }
+
+      $.ajax({
+        type: "HEAD",
+        async: true,
+        url: document.location,
+        error: function (xhr, status, thrown) {
+          log("Unable to get the Swagger UI URL from the server: " + thrown);
+        },
+        success: function (message, text, response) {
+          var url = response.getResponseHeader('Swagger-API-Docs-URL');
+
+          if (!url) {
+            url = window.location.search.match(/url=([^&]+)/);
+
+            if (url && url.length > 1) {
+              url = decodeURIComponent(url[1]);
+            } else {
+              url = "http://petstore.swagger.io/v2/swagger.json";
+            }
+          }
+
+          initSwaggerUi(url);
+        }
+      });
+    });
+  </script>
+</head>
+
+<body class="swagger-section">
+<div id="header">
+  <div class="swagger-ui-wrap">
+    <a id="logo" href="http://swagger.io/">swagger</a>
+    <form id="api_selector">
+      <div class="input"><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" value="http://localhost:9080/api-docs" type="text"></div>
+      <div class="input"><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"></div>
+      <div class="input"><a id="explore" href="#" data-sw-translate="">Explore</a></div>
+    </form>
+  </div>
+</div>
+
+<div id="message-bar" class="swagger-ui-wrap message-success" data-sw-translate=""></div>
+<div id="swagger-ui-container" class="swagger-ui-wrap"><div class="info" id="api_info">
+  <div class="info_title">Ingestion API</div>
+  <div class="info_description markdown"><p>APIs for managing data ingestion in the IBM Cloud Object Storage.</p>
+</div>
+  
+  
+  
+  
+  
+</div>
+<div class="container" id="resources_container">
+  <ul id="resources"><li id="resource_Delete" class="resource active"><div class="heading">
+  <h2>
+    <a href="#%21/Delete" class="toggleEndpointList" data-id="Delete">Delete</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/Delete" id="endpointListTogger_Delete" class="toggleEndpointList" data-id="Delete" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="Delete" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="Delete" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="Delete_endpoint_list" style="display: block;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="delete operation" id="Delete_deleteData">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/Delete/deleteData" class="toggleOperation">delete</a>
+          </span>
+          <span class="path">
+          <a href="#%21/Delete/deleteData" class="toggleOperation ">/data/{resourceid}</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/Delete/deleteData" class="toggleOperation">Delete uploaded data resource</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="Delete_deleteData_content" style="display: none;">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Delete uploaded data resource from the datalLake for a specific resourceid</p>
+</div>
+
+        
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Parameters</h4>
+          <table class="fullwidth">
+          <thead>
+            <tr>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter</th>
+            <th style="width: 310px; max-width: 310px" data-sw-translate="">Value</th>
+            <th style="width: 200px; max-width: 200px" data-sw-translate="">Description</th>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter Type</th>
+            <th style="width: 220px; max-width: 230px" data-sw-translate="">Data Type</th>
+            </tr>
+          </thead>
+          <tbody class="operation-params">
+
+          <tr><td class="code"><label for="moperator0.016530848246684493">operator</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="operator" placeholder="" id="moperator0.016530848246684493" type="text">
+</td>
+<td class="markdown"><p>The end user making the request</p>
+</td>
+<td>header</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code required"><label for="mresourceid0.7974251660409224">resourceid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="resourceid" placeholder="(required)" id="mresourceid0.7974251660409224" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The resourceid of the data resource to be deleted</p>
+</span></strong>
+</td>
+<td>path</td>
+<td><span class="model-signature">string</span></td>
+</tr></tbody>
+          </table>
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Response Messages</h4>
+          <table class="fullwidth">
+            <thead>
+            <tr>
+              <th data-sw-translate="">HTTP Status Code</th>
+              <th data-sw-translate="">Reason</th>
+              <th data-sw-translate="">Response Model</th>
+              <th data-sw-translate="">Headers</th>
+            </tr>
+            </thead>
+            <tbody class="operation-status">
+            <tr><td class="code" width="15%">200</td>
+<td class="markdown"><p>Success</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr><tr><td class="code" width="15%">404</td>
+<td class="markdown"><p>Not Found</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li><li id="resource_Download" class="resource active"><div class="heading">
+  <h2>
+    <a href="#%21/Download" class="toggleEndpointList" data-id="Download">Download</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/Download" id="endpointListTogger_Download" class="toggleEndpointList" data-id="Download" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="Download" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="Download" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="Download_endpoint_list" style="display: block;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="get operation" id="Download_getData">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/Download/getData" class="toggleOperation">get</a>
+          </span>
+          <span class="path">
+          <a href="#%21/Download/getData" class="toggleOperation ">/data/{resourceid}</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/Download/getData" class="toggleOperation">Download data resource from data lake</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="Download_getData_content" style="display: none;">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Retrieves a data resource, referenced by its resourceid</p>
+</div>
+
+        
+          <div class="response-class">
+            <h4><span data-sw-translate="">Response Class</span> (<span data-sw-translate="">Status</span> 200)</h4>
+              <div class="markdown"><p>The data resource that was requested</p>
+</div>
+            <p><span class="model-signature"><div><div>
+<ul class="signature-nav">
+  <li><a class="description-link" href="#" data-sw-translate="">Model</a></li>
+  <li><a class="snippet-link selected" href="#" data-sw-translate="">Example Value</a></li>
+</ul>
+<div>
+
+<div class="signature-container">
+  <div class="description" style="display: none;">
+    <span class="strong">InputStream {</span><span class="strong">}</span>
+  </div>
+
+  <div class="snippet" style="display: block;">
+      <div class="snippet_json" style="display: block;">
+        <pre><code>{}</code></pre>
+        
+      </div>
+  </div>
+</div>
+</div></div></div></span></p>
+            <br>
+            <div class="response-content-type"><div><label data-sw-translate="" for="rct0.015489978503622215">Response Content Type</label>
+<select name="responseContentType" id="rct0.015489978503622215">
+  <option value="application/octet-stream" selected="selected">application/octet-stream</option>
+</select>
+</div></div>
+            </div>
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Parameters</h4>
+          <table class="fullwidth">
+          <thead>
+            <tr>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter</th>
+            <th style="width: 310px; max-width: 310px" data-sw-translate="">Value</th>
+            <th style="width: 200px; max-width: 200px" data-sw-translate="">Description</th>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter Type</th>
+            <th style="width: 220px; max-width: 230px" data-sw-translate="">Data Type</th>
+            </tr>
+          </thead>
+          <tbody class="operation-params">
+
+          <tr><td class="code"><label for="moperator0.0165362612264377">operator</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="operator" placeholder="" id="moperator0.0165362612264377" type="text">
+</td>
+<td class="markdown"><p>The end user making the request</p>
+</td>
+<td>header</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code required"><label for="mresourceid0.38330315761888234">resourceid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="resourceid" placeholder="(required)" id="mresourceid0.38330315761888234" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The resourceid of the resource to be retrieved</p>
+</span></strong>
+</td>
+<td>path</td>
+<td><span class="model-signature">string</span></td>
+</tr></tbody>
+          </table>
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Response Messages</h4>
+          <table class="fullwidth">
+            <thead>
+            <tr>
+              <th data-sw-translate="">HTTP Status Code</th>
+              <th data-sw-translate="">Reason</th>
+              <th data-sw-translate="">Response Model</th>
+              <th data-sw-translate="">Headers</th>
+            </tr>
+            </thead>
+            <tbody class="operation-status">
+            <tr><td class="code" width="15%">404</td>
+<td class="markdown"><p>Not Found</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li><li id="resource_Metadata" class="resource active"><div class="heading">
+  <h2>
+    <a href="#%21/Metadata" class="toggleEndpointList" data-id="Metadata">Metadata</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/Metadata" id="endpointListTogger_Metadata" class="toggleEndpointList" data-id="Metadata" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="Metadata" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="Metadata" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="Metadata_endpoint_list" style="display: block;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="get operation" id="Metadata_getMetadata">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/Metadata/getMetadata" class="toggleOperation">get</a>
+          </span>
+          <span class="path">
+          <a href="#%21/Metadata/getMetadata" class="toggleOperation ">/metadata/{resourceid}</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/Metadata/getMetadata" class="toggleOperation">Get metadata of an uploaded data resource</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="Metadata_getMetadata_content" style="display: none;">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Retrieves attributes from the data lake for a resource ID</p>
+</div>
+
+        
+          <div class="response-class">
+            <h4><span data-sw-translate="">Response Class</span> (<span data-sw-translate="">Status</span> 200)</h4>
+              <div class="markdown"><p>The metadata of the requested resourceid</p>
+</div>
+            <p><span class="model-signature"><div><div>
+<ul class="signature-nav">
+  <li><a class="description-link" href="#" data-sw-translate="">Model</a></li>
+  <li><a class="snippet-link selected" href="#" data-sw-translate="">Example Value</a></li>
+</ul>
+<div>
+
+<div class="signature-container">
+  <div class="description" style="display: none;">
+    <span class="strong">ObjectMeta {</span><div><span class="propName ">resourceId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">subjectId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">tenantId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">sourceId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">operator</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">objectSize</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>
+  </div>
+
+  <div class="snippet" style="display: block;">
+      <div class="snippet_json" style="display: block;">
+        <pre><code>{
+  "tenantId": "tenantId",
+  "sourceId": "sourceId",
+  "subjectId": "subjectId",
+  "operator": "user",
+  "resourceId": "resourceId",
+  "objectSize": 0
+}</code></pre>
+        
+      </div>
+  </div>
+</div>
+</div></div></div></span></p>
+            <br>
+            <div class="response-content-type"><div><label data-sw-translate="" for="rct0.5138468914954623">Response Content Type</label>
+<select name="responseContentType" id="rct0.5138468914954623">
+  <option value="application/json" selected="selected">application/json</option>
+</select>
+</div></div>
+            </div>
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Parameters</h4>
+          <table class="fullwidth">
+          <thead>
+            <tr>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter</th>
+            <th style="width: 310px; max-width: 310px" data-sw-translate="">Value</th>
+            <th style="width: 200px; max-width: 200px" data-sw-translate="">Description</th>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter Type</th>
+            <th style="width: 220px; max-width: 230px" data-sw-translate="">Data Type</th>
+            </tr>
+          </thead>
+          <tbody class="operation-params">
+
+          <tr><td class="code"><label for="moperator0.9940475464100644">operator</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="operator" placeholder="" id="moperator0.9940475464100644" type="text">
+</td>
+<td class="markdown"><p>The end user making the request</p>
+</td>
+<td>header</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code required"><label for="mresourceid0.46986288022465084">resourceid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="resourceid" placeholder="(required)" id="mresourceid0.46986288022465084" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The resourceid of the data resource for which metadata should returned</p>
+</span></strong>
+</td>
+<td>path</td>
+<td><span class="model-signature">string</span></td>
+</tr></tbody>
+          </table>
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Response Messages</h4>
+          <table class="fullwidth">
+            <thead>
+            <tr>
+              <th data-sw-translate="">HTTP Status Code</th>
+              <th data-sw-translate="">Reason</th>
+              <th data-sw-translate="">Response Model</th>
+              <th data-sw-translate="">Headers</th>
+            </tr>
+            </thead>
+            <tbody class="operation-status">
+            <tr><td class="code" width="15%">404</td>
+<td class="markdown"><p>Not Found</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li><li id="resource_SearchByKey" class="resource active"><div class="heading">
+  <h2>
+    <a href="#%21/SearchByKey" class="toggleEndpointList" data-id="SearchByKey">SearchByKey</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/SearchByKey" id="endpointListTogger_SearchByKey" class="toggleEndpointList" data-id="SearchByKey" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="SearchByKey" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="SearchByKey" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="SearchByKey_endpoint_list" style="display: block;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="get operation" id="SearchByKey_searchByKey">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/SearchByKey/searchByKey" class="toggleOperation">get</a>
+          </span>
+          <span class="path">
+          <a href="#%21/SearchByKey/searchByKey" class="toggleOperation ">/search</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/SearchByKey/searchByKey" class="toggleOperation">Search datalake by key metadata and return list of resource IDs matching criteria</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="SearchByKey_searchByKey_content" style="display: none;">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Searches and retrieves resource IDs from the data lake based on search criteria</p>
+</div>
+
+        
+          <div class="response-class">
+            <h4><span data-sw-translate="">Response Class</span> (<span data-sw-translate="">Status</span> 200)</h4>
+              <div class="markdown"><p>The resource IDs and their attributes matching query criteria up to 1000 or first maxResults if specified</p>
+</div>
+            <p><span class="model-signature"><div><div>
+<ul class="signature-nav">
+  <li><a class="description-link" href="#" data-sw-translate="">Model</a></li>
+  <li><a class="snippet-link selected" href="#" data-sw-translate="">Example Value</a></li>
+</ul>
+<div>
+
+<div class="signature-container">
+  <div class="description" style="display: none;">
+    <span class="strong">ObjectMetaMessage {</span><div><span class="propName ">resultsList</span> (<span class="propType">Array[string]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propWrap"><span class="propName ">nextOffset</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)<table class="optionsWrapper"><tbody><tr><th colspan="2">string</th></tr><tr><td class="optionName">Default:</td><td></td></tr></tbody></table></span></div><span class="strong">}</span>
+  </div>
+
+  <div class="snippet" style="display: block;">
+      <div class="snippet_json" style="display: block;">
+        <pre><code>{
+  "resultsList": [
+    "resourceId1",
+    "resourceId2"
+  ],
+  "nextOffset": "nextoffset"
+}</code></pre>
+        
+      </div>
+  </div>
+</div>
+</div></div></div></span></p>
+            <br>
+            <div class="response-content-type"><div><label data-sw-translate="" for="rct0.6552427100743707">Response Content Type</label>
+<select name="responseContentType" id="rct0.6552427100743707">
+  <option value="application/json" selected="selected">application/json</option>
+</select>
+</div></div>
+            </div>
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Parameters</h4>
+          <table class="fullwidth">
+          <thead>
+            <tr>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter</th>
+            <th style="width: 310px; max-width: 310px" data-sw-translate="">Value</th>
+            <th style="width: 200px; max-width: 200px" data-sw-translate="">Description</th>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter Type</th>
+            <th style="width: 220px; max-width: 230px" data-sw-translate="">Data Type</th>
+            </tr>
+          </thead>
+          <tbody class="operation-params">
+
+          <tr><td class="code required"><label for="mtenantid0.5588694747253361">tenantid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="tenantid" placeholder="(required)" id="mtenantid0.5588694747253361" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The tenant identifier of the client application</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="msourceid0.04995618789927225">sourceid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="sourceid" placeholder="(required)" id="msourceid0.04995618789927225" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>Identifier of source originating the data</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="msubjectid0.08479846882266129">subjectid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="subjectid" placeholder="(required)" id="msubjectid0.08479846882266129" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>An subject ID associated to the document in the data lake</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code"><label for="moperator0.04637073338168418">operator</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="operator" placeholder="" id="moperator0.04637073338168418" type="text">
+</td>
+<td class="markdown"><p>The end user making the request</p>
+</td>
+<td>header</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code"><label for="mmaxResults0.736582731721653">maxResults</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="maxResults" placeholder="" id="mmaxResults0.736582731721653" value="1000" type="text">
+</td>
+<td class="markdown"><p>The maximum number of entries to be returned. Default and limit is 1000.</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">long</span>
+</td>
+</tr><tr><td class="code"><label for="moffset0.3313560950965603">offset</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="offset" placeholder="" id="moffset0.3313560950965603" type="text">
+</td>
+<td class="markdown"><p>Next marker for subsequent queries. Default is ""</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li><li id="resource_SearchByMetadata" class="resource active"><div class="heading">
+  <h2>
+    <a href="#%21/SearchByMetadata" class="toggleEndpointList" data-id="SearchByMetadata">SearchByMetadata</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/SearchByMetadata" id="endpointListTogger_SearchByMetadata" class="toggleEndpointList" data-id="SearchByMetadata" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="SearchByMetadata" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="SearchByMetadata" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="SearchByMetadata_endpoint_list" style="display: block;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="get operation" id="SearchByMetadata_searchByMetadata">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/SearchByMetadata/searchByMetadata" class="toggleOperation">get</a>
+          </span>
+          <span class="path">
+          <a href="#%21/SearchByMetadata/searchByMetadata" class="toggleOperation ">/searchall</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/SearchByMetadata/searchByMetadata" class="toggleOperation">Search datalake by metadata and return list of resource IDs matching criteria</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="SearchByMetadata_searchByMetadata_content" style="display: none;">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Searches and retrieves resource IDs from the data lake based on search criteria</p>
+</div>
+
+        
+          <div class="response-class">
+            <h4><span data-sw-translate="">Response Class</span> (<span data-sw-translate="">Status</span> 200)</h4>
+              <div class="markdown"><p>The resource IDs and their attributes matching query criteria up to 1000 or first maxResults if specified</p>
+</div>
+            <p><span class="model-signature"><div><div>
+<ul class="signature-nav">
+  <li><a class="description-link" href="#" data-sw-translate="">Model</a></li>
+  <li><a class="snippet-link selected" href="#" data-sw-translate="">Example Value</a></li>
+</ul>
+<div>
+
+<div class="signature-container">
+  <div class="description" style="display: none;">
+    <span class="strong">ObjectMetaMessage {</span><div><span class="propName ">resultsList</span> (<span class="propType">Array[string]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propWrap"><span class="propName ">nextOffset</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)<table class="optionsWrapper"><tbody><tr><th colspan="2">string</th></tr><tr><td class="optionName">Default:</td><td></td></tr></tbody></table></span></div><span class="strong">}</span>
+  </div>
+
+  <div class="snippet" style="display: block;">
+      <div class="snippet_json" style="display: block;">
+        <pre><code>{
+  "resultsList": [
+    "resourceId1",
+    "resourceId2"
+  ],
+  "nextOffset": "nextoffset"
+}</code></pre>
+        
+      </div>
+  </div>
+</div>
+</div></div></div></span></p>
+            <br>
+            <div class="response-content-type"><div><label data-sw-translate="" for="rct0.5846485666081672">Response Content Type</label>
+<select name="responseContentType" id="rct0.5846485666081672">
+  <option value="application/json" selected="selected">application/json</option>
+</select>
+</div></div>
+            </div>
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Parameters</h4>
+          <table class="fullwidth">
+          <thead>
+            <tr>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter</th>
+            <th style="width: 310px; max-width: 310px" data-sw-translate="">Value</th>
+            <th style="width: 200px; max-width: 200px" data-sw-translate="">Description</th>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter Type</th>
+            <th style="width: 220px; max-width: 230px" data-sw-translate="">Data Type</th>
+            </tr>
+          </thead>
+          <tbody class="operation-params">
+
+          <tr><td class="code"><label for="mtenantid0.9298957239398844">tenantid</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="tenantid" placeholder="" id="mtenantid0.9298957239398844" type="text">
+</td>
+<td class="markdown"><p>The tenant identifier of the client application</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code"><label for="msourceid0.4760395306416181">sourceid</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="sourceid" placeholder="" id="msourceid0.4760395306416181" type="text">
+</td>
+<td class="markdown"><p>Identifier of source originating the data</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code"><label for="msubjectid0.7742999800371207">subjectid</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="subjectid" placeholder="" id="msubjectid0.7742999800371207" type="text">
+</td>
+<td class="markdown"><p>An subject ID associated to the document in the data lake</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code"><label for="moperator0.9584976903728661">operator</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="operator" placeholder="" id="moperator0.9584976903728661" type="text">
+</td>
+<td class="markdown"><p>The end user making the request</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code"><label for="mcontenttype0.35170742587658665">contenttype</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="contenttype" placeholder="" id="mcontenttype0.35170742587658665" type="text">
+</td>
+<td class="markdown"><p>The content type of the data e.g. HL7v2 or JSON</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr><tr><td class="code"><label for="mmaxResults0.5135940001379479">maxResults</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="maxResults" placeholder="" id="mmaxResults0.5135940001379479" value="1000" type="text">
+</td>
+<td class="markdown"><p>The maximum number of entries to be returned. Default and limit is 1000.</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">long</span>
+</td>
+</tr><tr><td class="code"><label for="moffset0.23059874749841824">offset</label></td>
+<td>
+
+<input class="parameter" minlength="0" name="offset" placeholder="" id="moffset0.23059874749841824" type="text">
+</td>
+<td class="markdown"><p>Next marker for subsequent queries made with index#jobid. Default is ""</p>
+</td>
+<td>query</td>
+<td>
+	<span class="model-signature">string</span>
+</td>
+</tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li><li id="resource_Upload" class="resource active"><div class="heading">
+  <h2>
+    <a href="#%21/Upload" class="toggleEndpointList" data-id="Upload">Upload</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/Upload" id="endpointListTogger_Upload" class="toggleEndpointList" data-id="Upload" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="Upload" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="Upload" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="Upload_endpoint_list" style="display: block;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="post operation" id="Upload_postData">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/Upload/postData" class="toggleOperation">post</a>
+          </span>
+          <span class="path">
+          <a href="#%21/Upload/postData" class="toggleOperation ">/data</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/Upload/postData" class="toggleOperation">Upload data resource to data lake</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="Upload_postData_content" style="display: none;">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Writes a data resource with the specified filename and associated metadata </p>
+</div>
+
+        
+          <div class="response-class">
+            <h4><span data-sw-translate="">Response Class</span> (<span data-sw-translate="">Status</span> 201)</h4>
+              <div class="markdown"><p>The metadata of the data just written</p>
+</div>
+            <p><span class="model-signature"><div><div>
+<ul class="signature-nav">
+  <li><a class="description-link" href="#" data-sw-translate="">Model</a></li>
+  <li><a class="snippet-link selected" href="#" data-sw-translate="">Example Value</a></li>
+</ul>
+<div>
+
+<div class="signature-container">
+  <div class="description" style="display: none;">
+    <span class="strong">ObjectMeta {</span><div><span class="propName ">resourceId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">subjectId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">tenantId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">sourceId</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">operator</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">objectSize</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>
+  </div>
+
+  <div class="snippet" style="display: block;">
+      <div class="snippet_json" style="display: block;">
+        <pre><code>{
+  "tenantId": "tenantId",
+  "sourceId": "sourceId",
+  "subjectId": "subjectId",
+  "operator": "user",
+  "resourceId": "resourceId",
+  "objectSize": 0
+}</code></pre>
+        
+      </div>
+  </div>
+</div>
+</div></div></div></span></p>
+            <br>
+            <div class="response-content-type"><div><label data-sw-translate="" for="rct0.5329691769015817">Response Content Type</label>
+<select name="responseContentType" id="rct0.5329691769015817">
+  <option value="application/json" selected="selected">application/json</option>
+</select>
+</div></div>
+            </div>
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Parameters</h4>
+          <table class="fullwidth">
+          <thead>
+            <tr>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter</th>
+            <th style="width: 310px; max-width: 310px" data-sw-translate="">Value</th>
+            <th style="width: 200px; max-width: 200px" data-sw-translate="">Description</th>
+            <th style="width: 100px; max-width: 100px" data-sw-translate="">Parameter Type</th>
+            <th style="width: 220px; max-width: 230px" data-sw-translate="">Data Type</th>
+            </tr>
+          </thead>
+          <tbody class="operation-params">
+
+          <tr><td class="code required"><label for="mtenantid0.0142330979644959">tenantid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="tenantid" placeholder="(required)" id="mtenantid0.0142330979644959" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The tenant identifier of the client application</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="msourceid0.09350681637828395">sourceid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="sourceid" placeholder="(required)" id="msourceid0.09350681637828395" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>Identifier of source originating the data</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="msubjectid0.9617408285875125">subjectid</label></td>
+<td>
+<input class="parameter required" minlength="1" name="subjectid" placeholder="(required)" id="msubjectid0.9617408285875125" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>An subject ID associated to the document in the data lake</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="moperator0.15122651544233412">operator</label></td>
+<td>
+<input class="parameter required" minlength="1" name="operator" placeholder="(required)" id="moperator0.15122651544233412" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The user identifier in the uploaded data</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="mcontenttype0.18508980390894403">contenttype</label></td>
+<td>
+<input class="parameter required" minlength="1" name="contenttype" placeholder="(required)" id="mcontenttype0.18508980390894403" type="text"></td>
+<td>
+	<strong><span class="markdown"><p>The content type of the data e.g. HL7v2 or JSON</p>
+</span></strong>
+</td>
+<td>header</td>
+<td><span class="model-signature">string</span></td>
+</tr><tr><td class="code required"><label for="mbody0.7167091615738945">body</label></td>
+<td>
+				<textarea class="body-textarea required" placeholder="(required)" name="body" id="mbody0.7167091615738945"></textarea>
+				<div class="editor_holder"></div>
+				<br>
+				<div class="parameter-content-type"><div><label for="pct0.5718412342929847" data-sw-translate="">Parameter content type:</label>
+<select name="parameterContentType" id="pct0.5718412342929847">
+  <option value="application/octet-stream" selected="selected">application/octet-stream</option>
+</select>
+</div></div>
+</td>
+<td>
+	<strong><span class="markdown"><p>The data object to write to data-lake</p>
+</span></strong>
+</td>
+<td>body</td>
+<td><span class="model-signature"><div><div>
+<ul class="signature-nav">
+  <li><a class="description-link" href="#" data-sw-translate="">Model</a></li>
+  <li><a class="snippet-link selected" href="#" data-sw-translate="">Example Value</a></li>
+</ul>
+<div>
+
+<div class="signature-container">
+  <div class="description" style="display: none;">
+    <span class="strong">InputStream {</span><span class="strong">}</span>
+  </div>
+
+  <div class="snippet" style="display: block;">
+      <div class="snippet_json" style="display: block;">
+        <pre><code>{}</code></pre>
+        <small class="notice" data-sw-translate=""></small>
+      </div>
+  </div>
+</div>
+</div></div></div></span></td>
+</tr></tbody>
+          </table>
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Response Messages</h4>
+          <table class="fullwidth">
+            <thead>
+            <tr>
+              <th data-sw-translate="">HTTP Status Code</th>
+              <th data-sw-translate="">Reason</th>
+              <th data-sw-translate="">Response Model</th>
+              <th data-sw-translate="">Headers</th>
+            </tr>
+            </thead>
+            <tbody class="operation-status">
+            <tr><td class="code" width="15%">400</td>
+<td class="markdown"><p>Bad Request</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr><tr><td class="code" width="15%">404</td>
+<td class="markdown"><p>Not Found</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li><li id="resource_Version" class="resource"><div class="heading">
+  <h2>
+    <a href="#%21/Version" class="toggleEndpointList" data-id="Version">Version</a> 
+  </h2>
+  <ul class="options">
+    <li>
+      <a href="#%21/Version" id="endpointListTogger_Version" class="toggleEndpointList" data-id="Version" data-sw-translate="">Show/Hide</a>
+    </li>
+    <li>
+      <a href="#" class="collapseResource" data-id="Version" data-sw-translate="">
+        List Operations
+      </a>
+    </li>
+    <li>
+      <a href="#" class="expandResource" data-id="Version" data-sw-translate="">
+        Expand Operations
+      </a>
+    </li>
+  </ul>
+</div>
+<ul class="endpoints" id="Version_endpoint_list" style="display: none;">
+
+<li class="endpoint">  <ul class="operations">
+    <li class="get operation" id="Version_getVersion">
+      <div class="heading">
+        <h3>
+          <span class="http_method">
+          <a href="#%21/Version/getVersion" class="toggleOperation">get</a>
+          </span>
+          <span class="path">
+          <a href="#%21/Version/getVersion" class="toggleOperation ">/version</a>
+          </span>
+        </h3>
+        <ul class="options">
+          <li>
+          <a href="#%21/Version/getVersion" class="toggleOperation">Show version</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content" id="Version_getVersion_content" style="">
+        <h4><span data-sw-translate="">Implementation Notes</span></h4>
+        <div class="markdown"><p>Displays the current version of data lake release.</p>
+</div>
+
+        
+
+
+        <form accept-charset="UTF-8" class="sandbox">
+          <div style="margin:0;padding:0;display:inline"></div>
+          <div style="margin:0;padding:0;display:inline"></div>
+          <h4 data-sw-translate="">Response Messages</h4>
+          <table class="fullwidth">
+            <thead>
+            <tr>
+              <th data-sw-translate="">HTTP Status Code</th>
+              <th data-sw-translate="">Reason</th>
+              <th data-sw-translate="">Response Model</th>
+              <th data-sw-translate="">Headers</th>
+            </tr>
+            </thead>
+            <tbody class="operation-status">
+            <tr><td class="code" width="15%">200</td>
+<td class="markdown"><p>Returns a version message as a JSON string</p>
+</td>
+<td width="50%"><span class="model-signature"></span></td>
+<td class="headers">
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</td></tr></tbody>
+          </table>
+          <div class="sandbox_header">
+            <input class="submit" value="Try it out!" data-sw-translate="" type="submit">
+            <a href="#" class="response_hider" style="display:none" data-sw-translate="">Hide Response</a>
+            <span class="response_throbber" style="display:none"></span>
+          </div>
+        </form>
+        <div class="response" style="display:none">
+          <h4 class="curl">Curl</h4>
+          <div class="block curl"></div>
+          <h4 data-sw-translate="">Request URL</h4>
+          <div class="block request_url"></div>
+          <h4 data-sw-translate="">Response Body</h4>
+          <div class="block response_body"></div>
+          <h4 data-sw-translate="">Response Code</h4>
+          <div class="block response_code"></div>
+          <h4 data-sw-translate="">Response Headers</h4>
+          <div class="block response_headers"></div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</li></ul>
+</li></ul>
+
+  <div class="footer">
+    <h4 style="color: #999">[ <span style="font-variant: small-caps">base url</span>: /ingestion/api
+  , <span style="font-variant: small-caps" data-sw-translate="">api version</span>: v1
+    ]
+    </h4>
+    </div>
+</div>
+</div>
+
+
+</body></html>
