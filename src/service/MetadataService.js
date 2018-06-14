@@ -32,7 +32,7 @@ exports.doGetMetadata = function(resourceid) {
 	 console.log('Getting metadata'); 
 	 var cos = cosConnection.configure();
 	 return cos.getObject({
-	    Bucket: cosConnection.metadataBucketName,
+	    Bucket: cosConnection.DEFAULT_METADATABUCKET,
 	    Key: resourceid,
 	 }).promise();
 };

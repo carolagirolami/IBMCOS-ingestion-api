@@ -147,7 +147,7 @@ exports.doCreateMetadata = function(resourceid,metadata) {
 	console.log("metadata"+JSON.stringify(metadata));
 	console.log("resourceid"+resourceid);
 	return cos.putObject({
-	    Bucket: cosConnection.metadataBucketName,
+	    Bucket: cosConnection.DEFAULT_METADATABUCKET,
 	    Key: resourceid,
 	    Body: JSON.stringify(metadata)
 	}).promise();

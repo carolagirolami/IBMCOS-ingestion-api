@@ -29,8 +29,8 @@ var DEFAULT_CLOUDFUNCTION_NAMESPACE = process.env.DEFAULT_CLOUDFUNCTION_NAMESPAC
 var DEFAULT_CLOUDFUNCTION_API_KEY = process.env.DEFAULT_API_KEY;
 */
 var DEFAULT_CLOUDFUNCTION_API_HOST = "openwhisk.eu-gb.bluemix.net"; 
-var DEFAULT_CLOUDFUNCTION_NAMESPACE = 'carolagirolami_dev';
-var DEFAULT_CLOUDFUNCTION_API_KEY = 'b34153d2-5c2e-4ef6-a9e9-24362d51fafe:Kq46uUUxEpYwuL4YNsOj8h4UElRA8iDOF5U1gEgjQFw3DuXGwGWn60LG1JBey2nD';
+var DEFAULT_CLOUDFUNCTION_NAMESPACE = "carolagirolami_dev";
+var DEFAULT_CLOUDFUNCTION_API_KEY = "b34153d2-5c2e-4ef6-a9e9-24362d51fafe:Kq46uUUxEpYwuL4YNsOj8h4UElRA8iDOF5U1gEgjQFw3DuXGwGWn60LG1JBey2nD";
 
 var sqlcloudFunction = exports.sqlcloudFunction = "sqlcloudfunction";
 var sqlcloudFunctionBucket  = exports.sqlcloudFunctionBucket = "cos://us-geo/metadata.net STORED AS JSON";

@@ -32,7 +32,7 @@ exports.doCheckObject = function (resourceid) {
     console.log('Check object id:'+resourceid);
     var cos = cosConnection.configure();
 	return cos.headObject({
-        Bucket: cosConnection.metadataBucketName,
+        Bucket: cosConnection.DEFAULT_METADATABUCKET,
         Key: resourceid,
     }).promise();
 };

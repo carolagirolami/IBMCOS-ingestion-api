@@ -52,7 +52,7 @@ exports.doQueryObjects = function(tenantid,sourceid,subjectid,operator,contentty
 	if( subjectid !== "" )  { select.where("subjectid= \""+ subjectid+"\""); }
 	if( operator !== "" )  { select.where("operator= \""+ operator+"\" "); }
 	if( contenttype !== "" )  { select.where("contenttype= \""+ contenttype+"\""); }
-	console.log("sqlSelect"+select.toString());
+	console.log("sqlSelect: "+select.toString());
 
 	var ow = cloudFunctionsConnection.configure_openwhisk();
 	var name = cloudFunctionsConnection.sqlCloudFunction;

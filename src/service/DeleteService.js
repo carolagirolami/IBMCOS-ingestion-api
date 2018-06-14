@@ -31,7 +31,7 @@ var cosConnection = require('../utils/cosConnection.js');
 exports.doDeleteObject = function(resourceid) {
 		var cos = cosConnection.configure();
         return cos.deleteObject({
-          Bucket: cosConnection.objectsBucketName,
+          Bucket: cosConnection.DEFAULT_OBJECTBUCKET,
           Key: resourceid
         }).promise();
 };
@@ -39,7 +39,7 @@ exports.doDeleteObject = function(resourceid) {
 exports.doDeleteMetadata = function(resourceid) {
 	var cos = cosConnection.configure();
     return cos.deleteObject({
-      Bucket: cosConnection.metadataBucketName,
+      Bucket: cosConnection.DEFAULT_METADATABUCKET,
       Key: resourceid
     }).promise();
 };

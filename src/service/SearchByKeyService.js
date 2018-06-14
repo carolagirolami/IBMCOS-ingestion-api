@@ -44,7 +44,7 @@ exports.doListObjects = function(tenantid,sourceid,subjectid,operator,maxResults
 		console.log('offset:'+offset);
 		var cos = cosConnection.configure();
 		return cos.listObjects({
-			Bucket: cosConnection.metadataBucketName, /* required */
+			Bucket: cosConnection.DEFAULT_METADATABUCKET, /* required */
 			Marker: offset,
 			MaxKeys: maxResults,
 			Prefix: prefix
