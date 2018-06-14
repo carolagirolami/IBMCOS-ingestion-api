@@ -6,13 +6,21 @@ Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js 
 
 ## Flow
 
+![Architecture Diagram](images/flow.png)
+
+1.The external application invokes REST apis 
+2.In case of upload request the INGESTION application invoke the hl7parser cloud function to validate and extract metadata from HL7 documents
+3.The application access the Cloud Object Storage instance to store valid documents, get document metadata, content and search by key.  
+4.To search by metadata the sqlcloud function is invoked.
+5.The sqlcloudfunction runs sql statements using the SQL Query service.
+
 
 # Steps
 
-1.## [Create and configure an Cloud Object Storage service instance]
-2.## [Create a SQL Query service instance]
-3.## [Build and publish hl7parser cloud function]
-4.## [Build and publish SQL cloud function]
+1.##[Create and configure an Cloud Object Storage service instance]
+2.##[Create a SQL Query service instance]
+3.##[Build and publish hl7parser cloud function]
+4.##[Build and publish SQL cloud function]
 
 ### 1. Create and configure an Cloud Object Storage service instance
 Sign up for an IBM Cloud account. Once registered, add an [IBM Cloud Object Storage service](https://console.bluemix.net/catalog/services/cloud-object-storage). 
@@ -24,13 +32,13 @@ In the IBM Cloud Object Storage UI:
 
 ### 2. Create a SQL Query service instance
 
- Follow instructions to create an [SQLQuery instance] (https://console.bluemix.net/docs/services/sql-query/getting-started.html#getting-started-tutorial)
+ Follow instructions to create an [SQLQuery instance]https://console.bluemix.net/docs/services/sql-query/getting-started.html#getting-started-tutorial)
 
 ### 3. Build and publish hl7parser cloud function
 Follow instructions for [hl7-parser-cloud-function](https://github.com/AnnalisaChiacchi/hl7-parser-cloud-function)
 
 ### 4. Build and publish SQL cloud function
-Follow instructions for [sqlcloudfunction] (https://github.com/IBM-Cloud/sql-query-clients/tree/master/Python/cloud_function)
+Follow instructions for [sqlcloudfunction](https://github.com/IBM-Cloud/sql-query-clients/tree/master/Python/cloud_function)
 
 
 ## Run locally
