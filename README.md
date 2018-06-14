@@ -9,15 +9,15 @@ Create REST api to ingest and retrieve stored HL7 documents in a simple Node.js 
 
 ![Architecture Diagram](images/flow.png)
 
-1. The external application invokes REST apis 
-2. In case of upload request the INGESTION application invoke the hl7parser cloud function to validate and extract metadata from HL7 documents
+1. The external application invokes INGESTION REST APIs 
+2. In case of upload request the application invokes the hl7parser cloud function to validate and extract metadata from HL7 documents
 3. The application access the Cloud Object Storage instance to store valid documents, get document metadata, content and search by key.  
 4. To search by metadata the sqlcloud function is invoked.
 5. The sqlcloudfunction runs sql statements using the SQL Query service.
 
 
 
-## Steps
+## Preliminary Steps
 
 1. [Create and configure an Cloud Object Storage service instance](#1-create_cos_instance)
 2. [Create a SQL Query service instance](#2-create_sql_instance)
@@ -29,12 +29,13 @@ Sign up for an IBM Cloud account. Once registered, add an [IBM Cloud Object Stor
 
 In the IBM Cloud Object Storage UI:
 
-- create 2 buckets (these are "folders" where uploaded files will be kept): called metadata.net and data.net
-- create a set of credentials. Make a note of the API endpoint and API key for the next step.
+- create two buckets (these are "folders" where uploaded files will be kept) one to store objects and another to store metadata as json file.
+- create a set of credentials. 
+Make a note of the bucket names, API endpoint and API key for the next step.
 
 ### 2. Create a SQL Query service instance
 
- Follow instructions to create an [SQLQuery instance]https://console.bluemix.net/docs/services/sql-query/getting-started.html#getting-started-tutorial)
+ Follow instructions to create an [SQLQuery instance](https://console.bluemix.net/docs/services/sql-query/getting-started.html#getting-started-tutorial)
 
 ### 3. Build and publish hl7parser cloud function
 Follow instructions for [hl7-parser-cloud-function](https://github.com/AnnalisaChiacchi/hl7-parser-cloud-function)
@@ -44,8 +45,7 @@ Follow instructions for [sqlcloudfunction](https://github.com/IBM-Cloud/sql-quer
 
 
 
-
-## Run locally
+## Run the application locally
 1. [Clone the repo](#1-clone-the-repo)
 2. [Run the application](#2-run-the-application)
 
@@ -68,11 +68,13 @@ $ npm run start
 
 Verify app is running and working correctly.
 
+
+
 ## Run the application using Docker
 1. [Build the image](#1-build-the-image)
 2. [Run the image](#2-run-the-image)
 
-## Prerequisites:
+### Prerequisites:
 1. [Create Docker account](https://cloud.docker.com/)
  
 2. [Install Docker CLI](https://docs.docker.com/install/)
@@ -103,12 +105,16 @@ $ docker run -p 3000:3000 -d $docker_username/IBMCOS-ingestion-api
 
 You can now access the application at http://localhost:3000
 
+
+
+
 ## Run the application on Kubernetes
 
-1. [Build image.](#1-build-image)
-2. [Deploy the application](#2-deploy-the-application)
+1. [Build image](#1-build-image)
+2. [Deploy and run the application on Kubernetes with a yaml file](#2-deploy-the-application)
+3. [Expose the app to the web by setting the port with the yaml file](#3-service-for-the-application)
 
-## Prerequisites
+### Prerequisites
 1. [Create an account with IBM Cloud](https://console.bluemix.net/registration/)
 
 2. [Install IBM Cloud CLI](https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html#getting-started)
@@ -170,7 +176,7 @@ $ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/IBMCOS
 kubectl create -f deploy/ingestion-api-deployment.yml
 ```
 
-### 3. Expose the app to the web by setting the port with the yaml file:
+### 3. Expose the app to the web by setting the port with the yaml file
 
 ```
 kubectl create -f service/ingestion-api-service.yml
