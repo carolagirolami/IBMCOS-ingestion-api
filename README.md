@@ -206,8 +206,7 @@ $ kubectl describe service deploy-react-kubernetes-service
 
 Swagger-ui is available on http://IP_ADDRESS:NODE_PORT/docs
 
-
-![Swagger ui](images/swagger_ui.htm)
+![Swagger ui](images/swagger_ui.png)
 
 # License
 
