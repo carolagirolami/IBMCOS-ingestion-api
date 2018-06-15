@@ -51,11 +51,15 @@ module.exports.searchByMetadata = function searchByMetadata (req, res, next) {
 	.then( function (data) {
 		var objectList = {};
 		console.log("Get metadata done with success");
-		objectList["jobid"] = data["jobId"];
+		objectList["resultsList"] = [];
 		var jsonObject = JSON.parse(data["result_set_sample"]);
 		if(jsonObject.data.length > 0)
 		{
-			objectList["nextOffset"] = data["result_next_index"];
+			if( data["result_next_index"] != "" )
+			{
+				objectList["nextOffset"] = data["result_next_index"];
+				objectList["jobid"] = data["jobId"];
+			}
 			objectList["resultsList"] = jsonObject.data;
 		}
 		

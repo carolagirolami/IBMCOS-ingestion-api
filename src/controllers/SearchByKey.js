@@ -19,6 +19,7 @@
 var util = require('util');
 var utils = require('../utils/writer.js');
 var SearchByKey = require('../service/SearchByKeyService');
+var Metadata = require('../service/MetadataService');
 
 
 
@@ -39,12 +40,21 @@ module.exports.searchByKey = function searchByKey (req, res, next) {
 		for (var i=0; i<data["Contents"].length; i++)
 		{
 			resourceids[i]=data["Contents"][i]["Key"];
-			console.log('resourceid:'+resourceids[i]);
 		} 
-		objectList["resultsList"]=resourceids;
-		utils.writeJson(res, JSON.stringify(objectList));	   		
+		objectList["resultsList"] = [];
+		var getMetadataPromises = resourceids.map((resourceid)=>Metadata.doGetMetadata(resourceid));
+		Promise.all(getMetadataPromises)
+		.then(function (data) {
+			for (var i=0; i<data.length; i++)
+			{
+				objectList["resultsList"].push(JSON.parse(data[i].Body.toString()));
+			}
+			utils.writeJson(res, JSON.stringify(objectList));	
+		})
+		.catch(function (err, data) {
+			utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	});	   		
 	})
 	.catch(function (err, data) {
-    	utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	   
-    });
+		utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	   
+	});
 };
