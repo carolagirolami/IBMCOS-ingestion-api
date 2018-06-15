@@ -55,7 +55,7 @@ exports.doQueryObjects = function(tenantid,sourceid,subjectid,operator,contentty
 	console.log("sqlSelect: "+select.toString());
 
 	var ow = cloudFunctionsConnection.configure_openwhisk();
-	var name = cloudFunctionsConnection.sqlCloudFunction;
+	var name = cloudFunctionsConnection.sqlcloudFunction;
 	var blocking = true, result = true;
 	var params = {
 			sql: select.toString(), 
