@@ -33,31 +33,32 @@ var cosConnection = require('../utils/cosConnection.js');
 exports.doParseContent = function(contenttype,body){
 	//validate document
 	var ow = cloudFunctionsConnection.configure_openwhisk();
-	if ( contenttype === "HL7" )
+	var parsers = JSON.parse(cloudFunctionsConnection.parserscloudFunction);
+	console.log("Configured parsers cloud function: " +cloudFunctionsConnection.parserscloudFunction);
+	if ( parsers.hasOwnProperty(contenttype) === false )
 	{
-		var name = cloudFunctionsConnection.hl7parsercloudFunction;
+		console.log("Unkown content type " + contenttype + ", no parser available");
+		var err = {};
+		err.message = "Unkown content type " + contenttype + ", no parser available";
+		err.statusCode = 404;
+		return Promise.reject(err);
+	}	
+	else
+	{		
+		var name = parsers[contenttype];
 		var blocking = true, result = true;
-		var params = {
-				hl7input: body.toString().replace(/\n/g,"\r"), 
-		};
-		console.log("params"+ JSON.stringify(params));
-		console.log("name"+ name);
+		var params = {};
+		params[contenttype+"input"]=body.toString().replace(/\n/g,"\r");
 		return ow.actions.invoke({name, blocking, result, params});
 		// return promise
 	}
-	else
-	{
-		console.log("ALL other cases");
-		var validationdata = {};
-		validationdata["isValid"] = true;
-		return new Promise(function(resolve, reject){ resolve(validationdata);});
-	}
+	
 };
 
 
 /**
  * Generate a resource id
- * build the resource id using the sequnce of tenantid-sourceid-subjectid-timecreated-uuid
+ * build the resource id using the sequence of tenantid-sourceid-subjectid-timecreated-uuid
  * 
  * tenantid String The tenant identifier of the client application
  * sourceid String Identifier of source originating the data

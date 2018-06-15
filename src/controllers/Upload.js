@@ -50,6 +50,7 @@ module.exports.postData = function postData (req, res, next) {
 		}
 	})
 	.catch(function (err) {
+		console.log("err" + JSON.stringify(err));
 		utils.writeJson(res, JSON.stringify(err.message), err.statusCode);	
 	});
 

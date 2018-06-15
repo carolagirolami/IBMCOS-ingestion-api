@@ -21,16 +21,21 @@ spec:
         ports:
         - containerPort: 9080
         env:
-        - name: DEFAULT_API_KEY
+        - name: DEFAULT_SERVICE_API_KEY
           valueFrom:
             secretKeyRef:
              name: apikey
-             key: DEFAULT_API_KEY
+             key: DEFAULT_SERVICE_API_KEY
         - name: DEFAULT_SERVICE_INSTANCE_ID
           valueFrom:
             secretKeyRef:
              name: apikey
              key: DEFAULT_SERVICE_INSTANCE_ID
+        - name: DEFAULT_CLOUDFUNCTION_API_KEY
+          valueFrom:
+            secretKeyRef:
+             name: apikey
+             key: DEFAULT_CLOUDFUNCTION_API_KEY     
         - name: DEFAULT_IAM_ENDPOINT 
           value: "https://iam.bluemix.net/oidc/token"
         - name: DEFAULT_ENDPOINT_URL 

@@ -1,7 +1,7 @@
-# REST Application to ingest and search HL7 documents on IBM Cloud Object Storage 
+# REST Application to ingest and search documents on IBM Cloud Object Storage 
 
 ## Overview
-REST APIs to ingest and retrieve stored HL7 documents in a simple Node.js application, the application uses the IBM Object Storage service available on IBM Cloud and is deployed on top of the container orchestration platform Kubernetes. Documents are parsed and validated using an external cloud function: hl7parsercloudfunction. Two types of searches are available, one by keys and one by metadata using the IBM SQL Query service.  
+REST APIs to ingest and retrieve stored documents in a simple Node.js application, the application uses the IBM Object Storage service available on IBM Cloud and is deployed on top of the container orchestration platform Kubernetes. Documents are parsed and validated using an external cloud function: hl7parsercloudfunction. Two types of searches are available, one by keys and one by metadata using the IBM SQL Query service.  
 
 
 
