@@ -3,14 +3,28 @@
 ## Overview
 REST APIs to ingest and retrieve stored documents in a simple Node.js application, the application uses the IBM Object Storage service available on IBM Cloud and is deployed on top of the container orchestration platform Kubernetes. Documents are parsed and validated using an external cloud function: hl7parsercloudfunction. Two types of searches are available, one by keys and one by metadata using the IBM SQL Query service.  
 
+## Description
+This application uses the IBM Cloud Object Storage, a highly scalable cloud storage service, and to interact with it the *ibm-cos-sdk* for node.js, which provides the same S3 APIs as AWS Cloud Storage.
+Two buckets have been defined as folders, one to store the objects and another one to store metadata as JSON files. The metadata bucket is used to search documents by their metadata through the IBM SQL Query Service.
+Infact using the *searchByMetadata* API is possible to define one or more more metadata values as query parameters, they are put in AND and used to build the query that is run on the metadata bucket invoking the
+external cloud function: sqlcloudfunction. Transactionality is guarantee in each operation on the storage using the metadata as master. 
+ 
+The resource key is built using the following concatenation of metadata: *tenantid-sourceid-subjectid-timecreated-uuid*. 
+This structure has been defined in order to implement the *searchByKey* API which implements the fast search by the prefix *tenantid-sourceid-subjectid* directly using the S3 APIs.
+The other REST APIs available with this application are:
+- *poatData* : on the base of the content type defined as input parameter, the application first validates the input document using the configured parser cloud function (for this first release the hl7parser cloud function has been used). The parser returns with validation result and a subset of metadata extracted form the documents. Object and metadata are stored into separate bucket but with the same resource key.
+- *getMetadata* : retrieves metadata sored as JSON file. 
+- *getData* : retrieve the object content.
+- *deleteData*:  deletes the objects from the two buckets.
+- *getVersion* :to get the release version.
 
 
 ## Flow
 
 ![Architecture Diagram](images/flow.png)
 
-1. The external application invokes INGESTION REST APIs 
-2. In case of upload request the application invokes the hl7parser cloud function to validate and extract metadata from HL7 documents
+1. The external application invokes ingestion REST APIs 
+2. In case of upload request with content type hl7, the application invokes the hl7parser cloud function to validate and extract metadata from the input HL7 document
 3. The application access the Cloud Object Storage instance to store valid documents, get document metadata, content and search by key.  
 4. To search by metadata the sqlcloud function is invoked.
 5. The sqlcloudfunction runs sql statements using the SQL Query service.
