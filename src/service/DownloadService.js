@@ -48,7 +48,7 @@ exports.doGetObject = function (resourceid) {
     console.log('Download object id:'+resourceid);
     var cos = cosConnection.configure();
 	return cos.getObject({
-        Bucket: cosConnection.objectsBucketName,
+        Bucket: cosConnection.DEFAULT_OBJECTBUCKET,
         Key: resourceid,
         ResponseContentType: 'application/octet-stream'
     }).promise();

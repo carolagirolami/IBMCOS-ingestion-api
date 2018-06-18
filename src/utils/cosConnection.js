@@ -42,7 +42,7 @@ var config = {
 
 var configure = exports.configure = function ()
 {
-	console.log("Configure client for connection");
+	console.log("Configure client for connection: "+JSON.stringify(config));
 	return new AWS.S3(config);
 };
 

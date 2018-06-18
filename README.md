@@ -6,15 +6,15 @@ REST APIs to ingest and retrieve stored documents in a simple Node.js applicatio
 ## Description
 This application uses the IBM Cloud Object Storage, a highly scalable cloud storage service, and to interact with it the *ibm-cos-sdk* for node.js, which provides the same S3 APIs as AWS Cloud Storage.
 Two buckets have been defined as folders, one to store the objects and another one to store metadata as JSON files. The metadata bucket is used to search documents by their metadata through the IBM SQL Query Service.
-Infact using the *searchByMetadata* API is possible to define one or more more metadata values as query parameters, they are put in AND and used to build the query that is run on the metadata bucket invoking the
-external cloud function: sqlcloudfunction. Transactionality is guarantee in each operation on the storage using the metadata as master. 
- 
-The resource key is built using the following concatenation of metadata: *tenantid-sourceid-subjectid-timecreated-uuid*. 
-This structure has been defined in order to implement the *searchByKey* API which implements the fast search by the prefix *tenantid-sourceid-subjectid* directly using the S3 APIs.
-The other REST APIs available with this application are:
-- *poatData* : on the base of the content type defined as input parameter, the application first validates the input document using the configured parser cloud function (for this first release the hl7parser cloud function has been used). The parser returns with validation result and a subset of metadata extracted form the documents. Object and metadata are stored into separate bucket but with the same resource key.
-- *getMetadata* : retrieves metadata sored as JSON file. 
-- *getData* : retrieve the object content.
+Transactionality is guarantee in each operation on the storage using the metadata as master. 
+Moreover the resource key is built using the following concatenation of metadata: *tenantid-sourceid-subjectid-timecreated-uuid*. 
+The REST APIs available with this application are:
+- *postData* : executes the objects upload. On the base of the content type defined as input parameter, the application first validates the input document using the configured parser cloud function (for this first release the hl7parser cloud function has been used). The parser returns with validation result and a subset of metadata extracted form the documents. Object and metadata are stored into separate bucket but with the same resource key.
+- *searchByKey* : implements the fast search by the prefix *tenantid-sourceid-subjectid* directly using the S3 APIs.
+- *searchByMetadata* :  implements the extended search by metadata. It is possible to define one or more metadata values as query parameters, they are put in AND and used to build the query that is run on the metadata bucket invoking the
+external cloud function: sqlcloudfunction.
+- *getMetadata* : retrieves metadata stored as JSON file. 
+- *getData* : retrieves the object content.
 - *deleteData*:  deletes the objects from the two buckets.
 - *getVersion* :to get the release version.
 
@@ -40,7 +40,7 @@ In the IBM Cloud Object Storage UI:
 
 - create two buckets (these are "folders" where uploaded files will be kept) one to store objects and another to store metadata as json file.
 - create a set of credentials. 
-Make a note of the bucket names, API endpoint and API key for the next step.
+Make a note of the bucket names, API end-point and API key for the next step.
 
 ### 2. Create a SQL Query service instance
 
@@ -74,42 +74,12 @@ $ npm install
 $ npm run start-local
 ```
 
-Verify app is running and working correctly at http://localhost:9080
+Verify app is running and working correctly at http://localhost:9080/docs
 
 
 
 ## Run the application using Docker
 
-### Prerequisites:
-1. [Create Docker account](https://cloud.docker.com/)
- 
-2. [Install Docker CLI](https://docs.docker.com/install/)
-
-3. [Retrieve and save your Docker user id](https://cloud.docker.com/)
-
-### 1. Build the image
-
-In a terminal, run:
-
-```
-$ docker build -t $docker_username/ingestion-api .
-```
-
-Your image should be listed by running:
-
-```
-$ docker images
-```
-
-### 2. Run the image
-
-In a terminal, run:
-
-```
-$ docker run -p 9080:9080 -d $docker_username/ingestion-api
-```
-
-You can now access the application at http://localhost:9080
 
 
 
@@ -174,10 +144,15 @@ $ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/ingest
 
 ### 2. Deploy and run the application on Kubernetes with a yaml file
 
+- Configure the current context
+```
+  $ kubectl config current-context
+```
+
 - Create a built-in secret to store APIKEY and SERVICE_INSTANCE_ID obtained at point 1. Create and configure an Cloud Object Storage service instance. 
 
 ```
-  $ kubectl create secret generic apikey --from-literal=DEFAULT_API_KEY="XXXXXXX" --from-literal=DEFAULT_SERVICE_INSTANCE_ID="crn:v1:bluemix:public:cloud-object-storage:global:a/xxxxxx"
+  $ kubectl create secret generic apikey --from-literal=DEFAULT_API_KEY="XXXXXXX" --from-literal=DEFAULT_SERVICE_INSTANCE_ID="crn:v1:bluemix:public:cloud-object-storage:global:a/xxxxxx"  --from-literal=DEFAULT_CLOUDFUNCTION_API_KEY="XXXXXXX"
 ```
 
 - Edit the file deploy/ingestion-api-deployment.yml setting the following variables on the base of the value 
@@ -220,7 +195,7 @@ To access your application. You would need the public IP address of your cluster
 $ bx cs workers YOUR_CLUSTER_NAME
 
 # For details on a specific Kubernetes service
-$ kubectl describe service ingestion-api-service
+$ kubectl describe service ingestion-api
 ```
 
 Swagger-ui is available on http://IP_ADDRESS:NODE_PORT/docs

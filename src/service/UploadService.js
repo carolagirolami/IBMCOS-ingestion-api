@@ -127,7 +127,7 @@ exports.doCreateObject = function(resourceid,body) {
     	console.log("Create object");
     	console.log("resourceid"+resourceid);
     return cos.putObject({
-        Bucket: cosConnection.objectsBucketName,
+        Bucket: cosConnection.DEFAULT_OBJECTBUCKET,
         Key: resourceid,
         Body: body
     }).promise();
