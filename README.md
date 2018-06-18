@@ -202,6 +202,19 @@ Swagger-ui is available on http://IP_ADDRESS:NODE_PORT/docs
 
 ![Swagger ui](images/swagger_ui.png)
 
+
+# Next Steps
+The application can be extended with the integration with other cloud function for object parsing. Those parser function should have in input a JSON like this:
+{ 
+   "<new_contenttype>":"<body>"
+}
+and output as per [hl7-parser-cloud-function](https://github.com/AnnalisaChiacchi/hl7-parser-cloud-function).
+
+A new configuration
+  "<new_contenttype>":"<new_parsercloudfunction>"
+would be added to the env variable DEFAULT_CLOUDFUNCTION_PARSERS to make this parser available for objects uploaded with header parameter : contenttype=<new_contenttype>
+  
+
 # License
 
 [Apache 2.0](LICENSE)

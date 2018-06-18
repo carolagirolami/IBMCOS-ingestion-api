@@ -43,7 +43,7 @@ paths:
         type: "string"
       - name: contenttype
         in: "header"
-        description: "The content type of the data e.g. HL7v2 or JSON"
+        description: "The content type of the data e.g. hl7"
         required: true
         type: string
       - in: "body"
@@ -238,7 +238,7 @@ paths:
         type: "string"
       - name: contenttype
         in: "query"
-        description: "The content type of the data e.g. HL7v2 or JSON"
+        description: "The content type of the data e.g. hl7"
         required: false
         default: ""
         type: string
@@ -291,10 +291,32 @@ definitions:
         type: "string"
         default: ""
     example:
-      resultsList:
-      - "resourceId1"
-      - "resourceId2"
-      nextOffset: "nextoffset"
+      "resultsList": [
+       {
+	      "sourceId": "source2",
+	      "tenantId": "tenant1",
+	      "subjectId": "subject2",
+	      "operator": "cgirolami",
+	      "contenttype": "hl7",
+	      "objectSize": "5288",
+	      "resourceid": "tenant1-source2-subject2-20180618133926647-ebdf5d24-a0fd-418a-827e-82580cc991ea",
+	      "messagetype": "ADT_A04",
+	      "patientid": "8501924",
+	      "observationidentifier": "DINnumber"
+	    },
+	    {
+	      "sourceId": "source2",
+	      "tenantId": "tenant1",
+	      "subjectId": "subject2",
+	      "operator": "cgirolami",
+	      "contenttype": "hl7",
+	      "objectSize": "5288",
+	      "resourceid": "tenant1-source2-subject2-20180618134552165-e0f04dd6-0426-4be6-8fe0-d84472544f28",
+	      "messagetype": "ADT_A04",
+	      "patientid": "8501924",
+	      "observationidentifier": "DINnumber"
+	    }]
+      "nextOffset": "nextoffset"
   ObjectMeta:
     type: "object"
     properties:
