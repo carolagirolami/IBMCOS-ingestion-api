@@ -61,19 +61,20 @@ Make a note of the cloudfunction api host and namespace.
 Clone the repo locally. In a terminal, run:
 
 ```
-$ git clone https://github.com/carolagirolami/IBMCOS-ingestion-api.git
+$ git clone https://github.com/carolagirolami/ingestion-api.git
 ```
 
 ### 2. Run the application
 1. Install [Node.js](https://nodejs.org/en/)
-2. Run the following commands in a terminal: 
+2. Edit the .env.sample with parameters obtained before (Preliminary Steps) and rename it as .env file. 
+3. Run the following commands in a terminal: 
 
 ```
 $ npm install
-$ npm run start
+$ npm run start-local
 ```
 
-Verify app is running and working correctly.
+Verify app is running and working correctly at http://localhost:9080
 
 
 
@@ -91,7 +92,7 @@ Verify app is running and working correctly.
 In a terminal, run:
 
 ```
-$ docker build -t $docker_username/IBMCOS-ingestion-api .
+$ docker build -t $docker_username/ingestion-api .
 ```
 
 Your image should be listed by running:
@@ -105,10 +106,10 @@ $ docker images
 In a terminal, run:
 
 ```
-$ docker run -p 3000:3000 -d $docker_username/IBMCOS-ingestion-api
+$ docker run -p 9080:9080 -d $docker_username/ingestion-api
 ```
 
-You can now access the application at http://localhost:3000
+You can now access the application at http://localhost:9080
 
 
 
@@ -168,7 +169,7 @@ $ bx cr namespace-add YOUR_NAMESPACE
 Build image in the IBM Container Registry: 
 
 ```
-$ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/IBMCOS-ingestion-api .
+$ bx cr build -t registry.<ibm_cloud_region>.bluemix.net/<your_namespace>/ingestion-api .
 ```
 
 ### 2. Deploy and run the application on Kubernetes with a yaml file
@@ -194,7 +195,9 @@ obtained at point 1. Create and configure an Cloud Object Storage service instan
     - name: DEFAULT_OBJECTBUCKET
       value: <object_bucket_name>  
     - name: DEFAULT_METADATABUCKET
-      value: <metadata_bucket_name>  
+      value: <metadata_bucket_name>
+    - DEFAULT_CLOUDFUNCTION_PARSERS 
+      value: <object_parsers>     
 ```
 - Run:
 
@@ -203,6 +206,8 @@ obtained at point 1. Create and configure an Cloud Object Storage service instan
 ```
 
 ### 3. Expose the app to the web by setting the port with the yaml file
+
+Run:
 
 ```
 $ kubectl create -f service/ingestion-api-service.yml
@@ -215,7 +220,7 @@ To access your application. You would need the public IP address of your cluster
 $ bx cs workers YOUR_CLUSTER_NAME
 
 # For details on a specific Kubernetes service
-$ kubectl describe service deploy-react-kubernetes-service
+$ kubectl describe service ingestion-api-service
 ```
 
 Swagger-ui is available on http://IP_ADDRESS:NODE_PORT/docs

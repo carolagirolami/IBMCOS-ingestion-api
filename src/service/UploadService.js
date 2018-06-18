@@ -33,11 +33,10 @@ var cosConnection = require('../utils/cosConnection.js');
 exports.doParseContent = function(contenttype,body){
 	//validate document
 	var ow = cloudFunctionsConnection.configure_openwhisk();
-	var parsers = JSON.parse(cloudFunctionsConnection.parserscloudFunction);
 	console.log("Configured parsers cloud function: " +cloudFunctionsConnection.parserscloudFunction);
+	var parsers = JSON.parse(cloudFunctionsConnection.parserscloudFunction);
 	if ( parsers.hasOwnProperty(contenttype) === false )
 	{
-		console.log("Unkown content type " + contenttype + ", no parser available");
 		var err = {};
 		err.message = "Unkown content type " + contenttype + ", no parser available";
 		err.statusCode = 404;
