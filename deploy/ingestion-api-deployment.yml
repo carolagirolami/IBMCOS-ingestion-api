@@ -15,7 +15,7 @@ spec:
         run: ingestion-api
     spec:
       containers:
-      - image: "registry.eu-gb.bluemix.net/cg_namespace1/ingestion-api"
+      - image: "registry.<ibm_cloud_region>.bluemix.net/<namespace>/ingestion-api"
         name: ingestion-api
         imagePullPolicy: Always
         ports:
@@ -37,17 +37,19 @@ spec:
              name: apikey
              key: DEFAULT_CLOUDFUNCTION_API_KEY     
         - name: DEFAULT_IAM_ENDPOINT 
-          value: "https://iam.bluemix.net/oidc/token"
+          value: <iam endpoint>
         - name: DEFAULT_ENDPOINT_URL 
-          value: "https://s3-api.us-geo.objectstorage.softlayer.net"
+          value: <endpoint_url>
         - name: DEFAULT_CLOUDFUNCTION_API_HOST
-          value: "openwhisk.eu-gb.bluemix.net"
+          value: <cloudfunction_api_host>
         - name: DEFAULT_CLOUDFUNCTION_NAMESPACE
-          value: "carolagirolami_dev"
+          value: <cloudfunction_namespace>
         - name: DEFAULT_OBJECTBUCKET
-          value: "data.net"
+          value: <object_bucket_name>
         - name: DEFAULT_METADATABUCKET
-          value: "metadata.net"
+          value: <metadata_bucket_name>
+        - name: DEFAULT_CLOUDFUNCTION_PARSERS
+          value: "{ \"hl7\":\"hl7parsercloudfunction\"}"  
         resources: {}
       hostname: ingestion-api
       restartPolicy: Always
